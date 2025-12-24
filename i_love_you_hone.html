@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Proposal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        .heart {
+            position: absolute;
+            color: #ff69b4;
+            font-size: 2rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: translateY(-100px) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        #musicControl {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(6px);
+        }
+
+        #musicControl:hover {
+            transform: scale(1.05);
+        }
+
+        .loading-heart {
+            display: inline-block;
+            font-size: 3rem;
+            animation: floatUp 2.6s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        .loading-heart:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .loading-heart:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .loading-heart:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.9);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateY(-36px) scale(1.05);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(0) scale(0.95);
+                opacity: 0;
+            }
+        }
+
+        /* Start modal */
+        #startModal {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 60;
+        }
+
+        #startModal .modal-card {
+            background: white;
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 380px;
+            text-align: center;
+        }
+
+        #startModal .modal-card p {
+            margin-bottom: 1rem;
+            color: #334155
+        }
+
+        #startModal .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center
+        }
+    </style>
+</head>
+
+<body class="bg-pink-50 min-h-screen flex items-center justify-center overflow-hidden font-sans">
+    <nav
+        style="position: fixed; top: 0; left: 0; width: 100%; text-align: center; padding: 10px; background: rgba(255,255,255,0.5); z-index: 9999; backdrop-filter: blur(5px);">
+        <a href="index.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Home</a>
+        <a href="i_love_you_hone.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Proposal</a>
+        <a href="sorry_for_angry_on_you.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Angry)</a>
+        <a href="sorry_rulane_ke_liye.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Crying)</a>
+        <a href="sorry_yar_pareshan_kar_raha_tha.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Bothering)</a>
+    </nav>
+    <!-- Hidden HTML5 audio element for background music (place music.mp4 in same folder) -->
+    <audio id="bgAudio"
+        src="Mere_Bina_-_Audio_Lyrical___Emraan_Hashmi,_Neha_Sharma___Nikhil_D_Souza___Pritam___Crook(256k).mp3" loop
+        preload="auto"></audio>
+    <!-- Music control button (visible so user can unmute/start playback) -->
+    <button id="musicControl" aria-label="Toggle music" title="Tap to play music"
+        class="fixed right-4 bottom-4 z-50 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-lg hover:scale-105 transform transition">🔈</button>
+    <div id="musicStatus"
+        class="fixed right-28 bottom-4 z-50 hidden text-sm text-gray-700 bg-white/90 p-2 rounded shadow">Muted</div>
+    <!-- Loading Section -->
+    <div id="loading"
+        class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-red-100">
+        <div class="flex items-center justify-center space-x-3">
+            <span class="loading-heart">💗</span>
+            <span class="loading-heart">💖</span>
+            <span class="loading-heart">💞</span>
+        </div>
+        <div class="text-2xl font-bold text-pink-600 mt-4" id="typing"></div>
+    </div>
+
+    <!-- Start permission modal: ask user to allow music or continue without music -->
+    <div id="startModal">
+        <div class="modal-card">
+            <h3 class="text-2xl font-semibold text-pink-600 mb-2">A small request</h3>
+            <p>Can I play a little background song while you read this?</p>
+            <div class="modal-actions">
+                <button id="startPlayBtn" class="bg-pink-500 text-white px-4 py-2 rounded-full">Yes, play music</button>
+                <button id="startSkipBtn" class="bg-white border border-gray-200 px-4 py-2 rounded-full">Continue
+                    without music</button>
+            </div>
+            <p class="text-xs text-gray-500 mt-3">You can toggle music later with the button at bottom-right.</p>
+        </div>
+    </div>
+
+    <!-- Questions Section -->
+    <div id="questions"
+        class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
+        <div id="q1" class="text-center hidden">
+            <p class="text-xl mb-4 text-gray-800">Do you know how important you are to me?</p>
+            <button id="btn1"
+                class="bg-red-400 hover:bg-red-500 hover:scale-110 text-white px-6 py-2 rounded-full transition transform duration-300">Of
+                course yes</button>
+        </div>
+        <div id="q2" class="text-center hidden">
+            <p class="text-xl mb-4 text-gray-800">Are you ready for a small surprise?</p>
+            <button id="btn2"
+                class="bg-red-400 hover:bg-red-500 hover:scale-110 text-white px-6 py-2 rounded-full transition transform duration-300">Yes
+                😁</button>
+        </div>
+    </div>
+
+    <!-- Reveal Section -->
+    <div id="reveal"
+        class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-red-200 to-pink-300">
+        <h1 class="text-4xl md:text-6xl font-bold text-white opacity-0" id="loveText">I Love You Honey ❤️</h1>
+    </div>
+
+    <!-- Memories Section -->
+    <div id="memories"
+        class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 to-purple-200">
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg text-center max-w-md mx-4">
+            <h2 class="text-2xl font-bold text-pink-600 mb-4">Sweet Memories</h2>
+            <p class="text-lg mb-2 text-gray-700">Every moment with you is a treasure. 💕</p>
+            <p class="text-lg mb-4 text-gray-700">From our first hello to endless laughs. 😊</p>
+            <button id="memBtn"
+                class="bg-pink-500 hover:bg-pink-600 hover:scale-110 text-white px-6 py-2 rounded-full transition transform duration-300">Next
+                💖</button>
+        </div>
+    </div>
+
+    <!-- Poem Section -->
+    <div id="poem"
+        class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-purple-200 to-red-200">
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg text-center max-w-md mx-4">
+            <h2 class="text-2xl font-bold text-red-600 mb-4">A Little Poem for You</h2>
+            <p class="text-lg mb-2 text-gray-700 italic">Roses are red, violets are blue,</p>
+            <p class="text-lg mb-2 text-gray-700 italic">My heart beats only for you. 🌹</p>
+            <p class="text-lg mb-4 text-gray-700 italic">In your eyes, I see my world anew. 💖</p>
+            <button id="poemBtn"
+                class="bg-red-500 hover:bg-red-600 hover:scale-110 text-white px-6 py-2 rounded-full transition transform duration-300">Next
+                🌟</button>
+        </div>
+    </div>
+
+    <!-- Ending Section -->
+    <div id="ending"
+        class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 to-red-300">
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg text-center max-w-md mx-4">
+            <h2 class="text-2xl font-bold text-pink-600 mb-4">Forever Yours</h2>
+            <p class="text-lg mb-2 text-gray-700">You are my everything, my love. ❤️</p>
+            <p class="text-lg mb-4 text-gray-700">Thank you for being you. 😘</p>
+            <div class="flex items-center justify-center space-x-2">
+                <span class="loading-heart" style="font-size:2.25rem">💗</span>
+                <span class="loading-heart" style="font-size:2rem">💖</span>
+                <span class="loading-heart" style="font-size:2.1rem">💞</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var audioEl = document.getElementById('bgAudio');
+        var audioReady = false;
+        var audioPlaying = false;
+        var musicControl = document.getElementById('musicControl');
+
+        // Tap overlay shown when autoplay with sound is blocked
+        var tapOverlayHtml = `
+        <div id="tapOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur z-40 hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+                <p class="text-lg mb-4 text-gray-800">Tap to hear the music and continue</p>
+                <button id="startWithSoundBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-full">Play Music & Continue</button>
+            </div>
+        </div>`;
+        // inject overlay into loading section
+        var loadingDiv = document.getElementById('loading');
+        if (loadingDiv) loadingDiv.insertAdjacentHTML('beforeend', tapOverlayHtml);
+
+        function updateMusicUI() {
+            var status = document.getElementById('musicStatus');
+            if (!status) return;
+            if (!audioReady) { status.classList.remove('hidden'); status.textContent = 'Loading music...'; }
+            else if (!audioPlaying) { status.classList.remove('hidden'); status.textContent = 'Muted (tap to play)'; }
+            else { status.classList.remove('hidden'); status.textContent = 'Playing'; }
+        }
+
+        function showTapOverlay() {
+            var over = document.getElementById('tapOverlay');
+            if (!over) return;
+            over.classList.remove('hidden');
+            var btn = document.getElementById('startWithSoundBtn');
+            if (btn) {
+                btn.addEventListener('click', function () {
+                    // try to unmute and play with user gesture
+                    audioEl.muted = false;
+                    audioEl.play().then(function () {
+                        audioPlaying = true; updateMusicUI();
+                        over.classList.add('hidden');
+                        if (musicControl) musicControl.textContent = '🔊';
+                    }).catch(function (e) { console.warn('User play failed', e); });
+                });
+            }
+        }
+
+        function startSequenceOnceAudio() {
+            // Start the page sequence (typing animation) only once
+            if (window._sequenceStarted) return; window._sequenceStarted = true;
+            // begin typing animation (which will hide loading after it completes)
+            typeWriter();
+        }
+
+        // Initialize audio only after user gives permission via start modal
+        function initAudioAndStart() {
+            if (!audioEl) { startSequenceOnceAudio(); return; }
+            audioEl.preload = 'auto';
+            audioEl.volume = 0.8;
+
+            audioEl.addEventListener('canplaythrough', function () {
+                audioReady = true; updateMusicUI();
+                // Try unmuted playback; if blocked, fallback to muted and show tap overlay
+                audioEl.muted = false;
+                audioEl.play().then(function () {
+                    audioPlaying = true; updateMusicUI();
+                    startSequenceOnceAudio();
+                }).catch(function (err) {
+                    console.warn('Unmuted autoplay blocked, falling back to muted autoplay', err);
+                    audioEl.muted = true;
+                    audioEl.play().then(function () {
+                        audioPlaying = true; updateMusicUI();
+                        showTapOverlay();
+                        startSequenceOnceAudio();
+                    }).catch(function (e) {
+                        console.warn('Muted autoplay also failed', e);
+                        showTapOverlay();
+                        startSequenceOnceAudio();
+                    });
+                });
+            });
+
+            audioEl.addEventListener('error', function (ev) {
+                var status = document.getElementById('musicStatus');
+                if (status) { status.classList.remove('hidden'); status.textContent = 'Music not available'; }
+                console.warn('Audio error', ev);
+                startSequenceOnceAudio();
+            });
+
+            audioEl.addEventListener('loadeddata', function () { if (!audioReady) { audioReady = true; updateMusicUI(); } });
+
+            try { audioEl.load(); } catch (e) { console.warn('audio load failed', e); startSequenceOnceAudio(); }
+
+            // Safety: if audio doesn't signal readiness within 5s, continue anyway but show tap overlay
+            setTimeout(function () { if (!audioReady) { audioReady = true; updateMusicUI(); showTapOverlay(); startSequenceOnceAudio(); } }, 5000);
+        }
+
+
+        // Typing animation for loading
+        const typingText = "Someone special is waiting…";
+        let i = 0;
+        const typingElement = document.getElementById('typing');
+        function typeWriter() {
+            if (i < typingText.length) {
+                typingElement.innerHTML += typingText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            } else {
+                // After typing, wait and move to questions
+                setTimeout(() => {
+                    gsap.to("#loading", {
+                        duration: 1, opacity: 0, onComplete: () => {
+                            document.getElementById('loading').classList.add('hidden');
+                            document.getElementById('questions').classList.remove('hidden');
+                            showQuestion(1);
+                        }
+                    });
+                }, 2000);
+            }
+        }
+
+        // Show questions sequentially
+        function showQuestion(num) {
+            gsap.from(`#q${num}`, {
+                duration: 1, y: 50, opacity: 0, onComplete: () => {
+                    document.getElementById(`q${num}`).classList.remove('hidden');
+                }
+            });
+        }
+
+        // Button clicks
+        document.getElementById('btn1').addEventListener('click', () => {
+            gsap.to("#q1", {
+                duration: 0.5, opacity: 0, onComplete: () => {
+                    document.getElementById('q1').classList.add('hidden');
+                    showQuestion(2);
+                }
+            });
+            // Ensure music unmuted on interaction
+            try { if (audioReady && audioEl && audioEl.play) { audioEl.muted = false; audioEl.play(); audioPlaying = true; if (musicControl) { musicControl.textContent = '🔊'; } } } catch (e) { }
+        });
+
+        // Start modal handlers
+        var startModal = document.getElementById('startModal');
+        var startPlayBtn = document.getElementById('startPlayBtn');
+        var startSkipBtn = document.getElementById('startSkipBtn');
+        if (startPlayBtn) {
+            startPlayBtn.addEventListener('click', function () {
+                if (startModal) startModal.style.display = 'none';
+                // quick check if browser can play mp4/mpeg
+                var canMp4 = audioEl && audioEl.canPlayType && audioEl.canPlayType('audio/mp4');
+                var canMp3 = audioEl && audioEl.canPlayType && audioEl.canPlayType('audio/mpeg');
+                if (audioEl && (canMp4 || canMp3)) {
+                    // initialize audio listeners
+                    initAudioAndStart();
+                    // try an immediate play using the user gesture (may succeed)
+                    try {
+                        audioEl.muted = false;
+                        audioEl.play().then(function () {
+                            audioPlaying = true; updateMusicUI();
+                            startSequenceOnceAudio();
+                        }).catch(function (err) {
+                            // will be handled by canplaythrough or fallback
+                            console.warn('Immediate play attempt failed', err);
+                        });
+                    } catch (err) { console.warn('Play attempt threw', err); }
+                } else {
+                    // not supported — show message and continue without music
+                    var status = document.getElementById('musicStatus'); if (status) { status.classList.remove('hidden'); status.textContent = 'Music not supported'; }
+                    initAudioAndStart();
+                    startSequenceOnceAudio();
+                }
+            });
+        }
+        if (startSkipBtn) {
+            startSkipBtn.addEventListener('click', function () {
+                if (startModal) startModal.style.display = 'none';
+                // proceed without initializing audio
+                startSequenceOnceAudio();
+            });
+        }
+
+        document.getElementById('btn2').addEventListener('click', () => {
+            gsap.to("#questions", {
+                duration: 1, opacity: 0, onComplete: () => {
+                    document.getElementById('questions').classList.add('hidden');
+                    document.getElementById('reveal').classList.remove('hidden');
+                    gsap.to("#loveText", { duration: 2, opacity: 1, scale: 1.1, ease: "back.out(1.7)" });
+                    setTimeout(() => {
+                        gsap.to("#reveal", {
+                            duration: 1, opacity: 0, onComplete: () => {
+                                document.getElementById('reveal').classList.add('hidden');
+                                document.getElementById('memories').classList.remove('hidden');
+                                gsap.from("#memories", { duration: 1, y: 50, opacity: 0 });
+                            }
+                        });
+                    }, 3000);
+                }
+            });
+            // Ensure music unmuted on interaction
+            try { if (audioReady && audioEl && audioEl.play) { audioEl.muted = false; audioEl.play(); audioPlaying = true; if (musicControl) { musicControl.textContent = '🔊'; } } } catch (e) { }
+        });
+
+        // Memories button
+        document.getElementById('memBtn').addEventListener('click', () => {
+            gsap.to("#memories", {
+                duration: 1, opacity: 0, onComplete: () => {
+                    document.getElementById('memories').classList.add('hidden');
+                    document.getElementById('poem').classList.remove('hidden');
+                    gsap.from("#poem", { duration: 1, y: 50, opacity: 0 });
+                }
+            });
+            try { if (audioReady && audioEl && audioEl.play) { audioEl.muted = false; audioEl.play(); audioPlaying = true; if (musicControl) { musicControl.textContent = '🔊'; } } } catch (e) { }
+        });
+
+        // Poem button
+        document.getElementById('poemBtn').addEventListener('click', () => {
+            gsap.to("#poem", {
+                duration: 1, opacity: 0, onComplete: () => {
+                    document.getElementById('poem').classList.add('hidden');
+                    document.getElementById('ending').classList.remove('hidden');
+                    gsap.from("#ending", { duration: 1, y: 50, opacity: 0 });
+                }
+            });
+            try { if (audioReady && audioEl && audioEl.play) { audioEl.muted = false; audioEl.play(); audioPlaying = true; if (musicControl) { musicControl.textContent = '🔊'; } } } catch (e) { }
+        });
+    </script>
+</body>
+
+</html>

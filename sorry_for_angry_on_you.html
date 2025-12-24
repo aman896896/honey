@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You, My Love ❤️</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&family=Dancing+Script:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .page {
+            position: absolute;
+            opacity: 0;
+            width: 90%;
+            max-width: 650px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 35px;
+            padding: 70px 50px 50px;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+            transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
+            pointer-events: none;
+            transform: scale(0.9);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .page.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.2em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            animation: slideDown 1.2s ease;
+            font-weight: 700;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        p {
+            font-size: 1.35em;
+            color: #444;
+            line-height: 1.9;
+            margin-bottom: 25px;
+            animation: fadeInText 1.5s ease;
+            font-weight: 300;
+        }
+
+        .honey {
+            color: #ff6b6b;
+            font-weight: 600;
+            font-family: 'Pacifico', cursive;
+            font-size: 1.1em;
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .emoji {
+            font-size: 5em;
+            margin: 20px 0;
+            animation: bounce 2.5s infinite;
+            display: inline-block;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-25px);
+            }
+        }
+
+        .heart {
+            animation: heartbeat 1.8s infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.15);
+            }
+
+            50% {
+                transform: scale(1);
+            }
+        }
+
+        .sparkle {
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            50% {
+                transform: rotate(180deg) scale(1.2);
+            }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(118, 75, 162, 0.4);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(118, 75, 162, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 2em;
+            animation: float 7s infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .music-permission {
+            background: white;
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 15px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 450px;
+            animation: scaleIn 0.8s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .music-permission h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #764ba2;
+            margin-bottom: 25px;
+            font-size: 2.5em;
+        }
+
+        .music-permission p {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .flower {
+            font-size: 4em;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 35px;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.4s ease;
+        }
+
+        .dot.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scale(1.4);
+            box-shadow: 0 0 15px rgba(118, 75, 162, 0.6);
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav
+        style="position: fixed; top: 0; left: 0; width: 100%; text-align: center; padding: 10px; background: rgba(255,255,255,0.5); z-index: 9999; backdrop-filter: blur(5px);">
+        <a href="index.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Home</a>
+        <a href="i_love_you_hone.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Proposal</a>
+        <a href="sorry_for_angry_on_you.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Angry)</a>
+        <a href="sorry_rulane_ke_liye.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Crying)</a>
+        <a href="sorry_yar_pareshan_kar_raha_tha.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Bothering)</a>
+    </nav>
+    <div class="stars" id="stars"></div>
+    <div class="floating-hearts" id="hearts"></div>
+    <div class="container">
+        <!-- Music Permission Page -->
+        <div class="music-permission" id="permissionPage">
+            <div class="flower">🌸</div>
+            <h2>Something Special for You...</h2>
+            <p>May I play some music for you, <span class="honey">honey</span>?</p>
+            <button class="btn" onclick="startExperience()">Yes, Please! ❤️</button>
+        </div>
+
+        <!-- Page 1 -->
+        <div class="page" id="page1">
+            <div class="emoji">😔</div>
+            <h1>I'm So Sorry...</h1>
+            <p>My dearest <span class="honey">honey</span>, I know I said things I shouldn't have. I spoke without
+                thinking, and I hurt your beautiful heart.</p>
+            <div class="navigation">
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 2 -->
+        <div class="page" id="page2">
+            <div class="emoji heart">💔</div>
+            <h1>I Was Wrong</h1>
+            <p>I unnecessarily said so many things to you, <span class="honey">honey</span>. Every word I regret deeply.
+                You didn't deserve any of that.</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 3 -->
+        <div class="page" id="page3">
+            <div class="emoji">🙏</div>
+            <h1>Please Forgive Me</h1>
+            <p><span class="honey">Honey</span>, you mean the entire world to me. I never want to hurt you. I promise to
+                think before I speak and treasure your feelings.</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 4 -->
+        <div class="page" id="page4">
+            <div class="emoji sparkle">✨</div>
+            <h1>You Light Up My World</h1>
+            <p>My sweet <span class="honey">honey</span>, you are the sunshine in my darkest days. Your smile brings me
+                more joy than anything else in this world.</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 5 -->
+        <div class="page" id="page5">
+            <div class="emoji">🌹</div>
+            <h1>You Are My Everything</h1>
+            <p><span class="honey">Honey</span>, your happiness matters to me more than anything. Every moment with you
+                is precious, and I'm truly sorry for making you upset.</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 6 -->
+        <div class="page" id="page6">
+            <div class="emoji heart">💖</div>
+            <h1>You Complete Me</h1>
+            <p>My beautiful <span class="honey">honey</span>, you make my life meaningful. Without you, my days feel
+                incomplete. You are my reason to smile every morning.</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 7 -->
+        <div class="page" id="page7">
+            <div class="emoji sparkle">🌟</div>
+            <h1>You're My Best Friend</h1>
+            <p><span class="honey">Honey</span>, you're not just my love, you're my best friend, my confidant, my safe
+                place. I can be myself around you, and that's the most beautiful gift.</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 8 -->
+        <div class="page" id="page8">
+            <div class="emoji heart">💝</div>
+            <h1>I Promise You</h1>
+            <p>My darling <span class="honey">honey</span>, I'll be more thoughtful, more caring, and more
+                understanding. You deserve nothing but pure love, kindness, and respect every single day.</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 9 -->
+        <div class="page" id="page9">
+            <div class="emoji">🦋</div>
+            <h1>You Make Me Better</h1>
+            <p>Sweet <span class="honey">honey</span>, because of you, I want to be a better person every day. You
+                inspire me, challenge me, and make me want to grow. Thank you for being you.</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="nextPage()">Next →</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- Page 10 -->
+        <div class="page" id="page10">
+            <div class="emoji heart">❤️</div>
+            <h1>I Love You Forever</h1>
+            <p>My precious <span class="honey">honey</span>, thank you for being so patient with me. You're the most
+                wonderful person, and I'm blessed to have you. Please forgive me? I love you more than words can say.
+                🥺💕</p>
+            <div class="navigation">
+                <button class="btn-secondary btn" onclick="prevPage()">← Previous</button>
+                <button class="btn" onclick="showPage(1)">Start Again ❤️</button>
+            </div>
+            <div class="progress-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot active"></div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="Mere_Bina_-_Audio_Lyrical___Emraan_Hashmi,_Neha_Sharma___Nikhil_D_Souza___Pritam___Crook(256k).mp3"
+            type="audio/mpeg">
+    </audio>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        let currentPage = 1;
+        const totalPages = 10;
+
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            const hearts = ['❤️', '💕', '💖', '💗', '💝', '💘'];
+
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('floating-heart');
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                heart.style.fontSize = (Math.random() * 1.5 + 1.5) + 'em';
+                heartsContainer.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 9000);
+            }, 800);
+        }
+
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function showPage(pageNum) {
+            if (pageNum < 1 || pageNum > totalPages) return;
+
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById('page' + pageNum).classList.add('active');
+            currentPage = pageNum;
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                showPage(currentPage + 1);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                showPage(currentPage - 1);
+            }
+        }
+
+        function startExperience() {
+            audio.play().catch(e => console.log('Audio play failed:', e));
+            document.getElementById('permissionPage').style.display = 'none';
+            showPage(1);
+            createFloatingHearts();
+            createStars();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('permissionPage').style.display !== 'none') return;
+
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                nextPage();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                prevPage();
+            }
+        });
+    </script>
+</body>
+
+</html>

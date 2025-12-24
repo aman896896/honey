@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="background-color: antiquewhite;">
+    <nav
+        style="position: fixed; top: 0; left: 0; width: 100%; text-align: center; padding: 10px; background: rgba(255,255,255,0.5); z-index: 9999; backdrop-filter: blur(5px);">
+        <a href="index.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Home</a>
+        <a href="i_love_you_hone.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Proposal</a>
+        <a href="sorry_for_angry_on_you.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Angry)</a>
+        <a href="sorry_rulane_ke_liye.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Crying)</a>
+        <a href="sorry_yar_pareshan_kar_raha_tha.html"
+            style="margin: 0 10px; text-decoration: none; color: #333; font-weight: bold; font-family: sans-serif;">Sorry
+            (Bothering)</a>
+    </nav>
+
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
+        <h1>Welcome Home ❤️</h1>
+        <p>Choose a page from the menu above.</p>
+    </div>
+
+    <audio id="bgMusic" autoplay loop>
+        <source src="Mere_Bina_-_Audio_Lyrical___Emraan_Hashmi,_Neha_Sharma___Nikhil_D_Souza___Pritam___Crook(256k).mp3"
+            type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var audio = document.getElementById("bgMusic");
+            audio.volume = 0.5;
+            var playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => { }).catch(error => {
+                    var btn = document.createElement("button");
+                    btn.innerText = "Play Music 🎵";
+                    btn.style.position = "fixed";
+                    btn.style.bottom = "20px";
+                    btn.style.right = "20px";
+                    btn.style.zIndex = "1000";
+                    btn.style.padding = "10px 20px";
+                    btn.style.backgroundColor = "#ff69b4";
+                    btn.style.color = "white";
+                    btn.style.border = "none";
+                    btn.style.borderRadius = "50px";
+                    btn.style.cursor = "pointer";
+                    btn.onclick = function () { audio.play(); btn.remove(); };
+                    document.body.appendChild(btn);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
