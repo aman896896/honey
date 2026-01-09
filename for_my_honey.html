@@ -5,12 +5,17 @@
     <title>For My Honey ❤️</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400&family=Noto+Nastaliq+Urdu:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #ff4d6d, #ff8fa3, #ffb3c1);
+            --gold-gradient: linear-gradient(45deg, #ffd700, #ffae00);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -18,204 +23,165 @@
         }
 
         body {
-            height: 100vh;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
-            overflow: hidden;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Poppins', sans-serif;
-            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+            padding: 20px;
         }
 
-        .container {
+        /* Container & Card Logic */
+        .main-wrapper {
             width: 100%;
-            max-width: 500px;
-            height: 600px;
+            max-width: 450px;
             position: relative;
-            perspective: 1000px;
+            z-index: 10;
+        }
+
+        .card-container {
+            position: relative;
+            height: 580px;
+            width: 100%;
         }
 
         .card {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(15px);
-            border-radius: 25px;
-            padding: 40px 35px;
+            inset: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px 30px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2),
-                        0 0 0 1px rgba(255, 255, 255, 0.3);
-            transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                        opacity 1.2s ease;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.2);
             opacity: 0;
-            transform: translateX(100%) rotateY(30deg);
+            visibility: hidden;
+            transform: scale(0.8) translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card.active {
             opacity: 1;
-            transform: translateX(0) rotateY(0);
-            z-index: 10;
-        }
-
-        .card.previous {
-            opacity: 0.5;
-            transform: translateX(-80%) rotateY(-30deg);
+            visibility: visible;
+            transform: scale(1) translateY(0);
             z-index: 5;
         }
 
-        .heart {
-            font-size: 70px;
-            color: #ff4d6d;
-            margin-bottom: 20px;
-            animation: heartbeat 1.8s infinite;
-            filter: drop-shadow(0 0 8px rgba(255, 77, 109, 0.6));
+        /* Colorful Typography */
+        .card h1, .card h2 {
+            font-family: 'Great Vibes', cursive;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 50px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
         }
 
-        h1 {
-            font-family: 'Great Vibes', cursive;
-            font-size: 55px;
-            color: #fff;
-            margin-bottom: 20px;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-        }
-
-        h2 {
-            font-family: 'Great Vibes', cursive;
-            font-size: 40px;
-            color: #fff;
+        .heart-icon {
+            font-size: 60px;
             margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            animation: pulse 1.5s infinite;
+            display: inline-block;
         }
 
         .message {
             color: #fff;
-            font-size: 17px;
-            line-height: 1.8;
-            margin-bottom: 25px;
-            padding: 0 10px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .urdu {
-            font-family: 'Noto Nastaliq Urdu', serif;
-            font-size: 22px;
-            color: #fff;
-            line-height: 1.8;
-            margin: 25px 0;
-            direction: rtl;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .urdu-translation {
-            font-style: italic;
-            color: #f0f0f0;
-            font-size: 15px;
-            margin-top: 10px;
-            opacity: 0.9;
-        }
-
-        .controls {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            z-index: 20;
-        }
-
-        button {
-            background: rgba(255, 255, 255, 0.25);
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            color: #fff;
-            padding: 12px 25px;
-            border-radius: 50px;
             font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        /* Beautiful Urdu Styling */
+        .urdu-section {
+            background: rgba(0,0,0,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            border-left: 3px solid #ff4d6d;
+            margin-top: 10px;
+        }
+
+        .urdu-text {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 20px;
+            color: #fff;
+            direction: rtl;
+            line-height: 2.2;
+            margin-bottom: 5px;
+        }
+
+        .translation {
+            font-size: 13px;
+            color: #ffd700;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding: 0 10px;
+        }
+
+        .btn-nav {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
+            transition: 0.3s;
             display: flex;
             align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .btn-nav:hover {
+            background: white;
+            color: #ff4d6d;
+        }
+
+        .indicators {
+            display: flex;
             gap: 8px;
         }
 
-        button:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .music-control {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: rgba(255, 255, 255, 0.2);
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: rgba(255,255,255,0.3);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             cursor: pointer;
-            z-index: 30;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
         }
 
-        .music-control i {
-            font-size: 22px;
-            color: white;
+        .dot.active {
+            background: #fff;
+            transform: scale(1.4);
+            box-shadow: 0 0 10px #fff;
         }
 
-        .card-indicators {
-            position: absolute;
-            bottom: 80px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            z-index: 20;
-        }
-
-        .indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-            background: white;
-            transform: scale(1.3);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-        }
-
-        /* Floating elements */
-        .floating-heart {
-            position: absolute;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 24px;
-            animation: floatUp 10s linear infinite;
+        /* Floating Elements */
+        .floating {
+            position: fixed;
+            pointer-events: none;
             z-index: 1;
-        }
-
-        .floating-flower {
-            position: absolute;
-            font-size: 28px;
-            animation: floatUp 14s linear infinite;
-            z-index: 1;
-            opacity: 0.8;
+            animation: float linear forwards;
         }
 
         /* Animations */
@@ -225,391 +191,164 @@
             100% { background-position: 0% 50%; }
         }
 
-        @keyframes heartbeat {
+        @keyframes pulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.25); }
+            50% { transform: scale(1.15); }
         }
 
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) rotate(0deg) scale(0.7); opacity: 0; }
-            20% { opacity: 0.9; }
-            100% { transform: translateY(-20vh) rotate(360deg) scale(1.3); opacity: 0; }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
 
-        @keyframes gentlePulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .container {
-                max-width: 90%;
-                height: 550px;
-            }
-            
-            .card {
-                padding: 30px 20px;
-            }
-            
-            h1 {
-                font-size: 45px;
-            }
-            
-            .urdu {
-                font-size: 20px;
-            }
+        /* Responsive Fixes */
+        @media (max-width: 400px) {
+            .card-container { height: 520px; }
+            .card h1 { font-size: 40px; }
+            .urdu-text { font-size: 17px; }
+            .message { font-size: 14px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Background Music -->
-    <audio id="bgMusic" loop autoplay>
-        <!-- Using a royalty-free romantic music track that should work across browsers -->
+    <audio id="bgMusic" loop>
         <source src="khali-salam-dua-lyrics-shortcut-romeo-mohit-chauhan-128-ytshorts.savetube.me.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
 
-    <div class="container">
-        <!-- Card 1: Apology -->
-        <div class="card active" id="card1">
-            <div class="heart">❤️</div>
-            <h1>My Honey</h1>
-            <div class="message">
-                Sorry honey…<br><br>
-                I know I hurt you, and that hurts me even more.<br>
-                Please trust me — I love you more than words,
-                more than silence, more than my mistakes.<br><br>
-                You are my heart, my peace, my forever.
+    <div class="main-wrapper">
+        <div class="card-container">
+            <div class="card active" id="card1">
+                <span class="heart-icon">❤️</span>
+                <h1>My Honey</h1>
+                <p class="message">
+                    Sorry honey… I know I hurt you, and that hurts me even more. 
+                    Please trust me — I love you more than words, more than silence.
+                </p>
+                <div class="urdu-section">
+                    <p class="urdu-text">تمہاری خاطر ہر اک درد جھیلا ہے میرا دل</p>
+                    <p class="translation">My heart has borne every pain for you</p>
+                </div>
             </div>
-            
-            <div class="urdu">
-                تمہاری خاطر ہر اک درد جھیلا ہے میرا دل<br>
-                تمہیں پانے کی ہر اک صورت سوچی ہے میرا دل
+
+            <div class="card" id="card2">
+                <span class="heart-icon">💖</span>
+                <h2>My Love</h2>
+                <p class="message">
+                    Every moment with you is a treasure. Your smile lights up my world. 
+                    I promise to cherish you every single day.
+                </p>
+                <div class="urdu-section">
+                    <p class="urdu-text">تیرے سوا کسی کا ہوں ہی نہیں</p>
+                    <p class="translation">I am no one's but yours</p>
+                </div>
             </div>
-            <div class="urdu-translation">
-                My heart has borne every pain for you<br>
-                My heart has considered every way to win you
+
+            <div class="card" id="card3">
+                <span class="heart-icon">✨</span>
+                <h2>My Promise</h2>
+                <p class="message">
+                    I promise to be your shelter in every storm and your joy in every moment. 
+                    I will always choose you.
+                </p>
+                <div class="urdu-section">
+                    <p class="urdu-text">ہر دم تیرے ساتھ رہوں گا</p>
+                    <p class="translation">I will always be with you</p>
+                </div>
+            </div>
+
+            <div class="card" id="card4">
+                <span class="heart-icon">🌹</span>
+                <h2>Forever Us</h2>
+                <p class="message">
+                    Our story is my favorite. I can't wait to write the rest of our lives 
+                    together and create eternal memories.
+                </p>
+                <div class="urdu-section">
+                    <p class="urdu-text">تم ہو تو ہر خواب ہے حقیقت</p>
+                    <p class="translation">With you, every dream is reality</p>
+                </div>
+            </div>
+
+            <div class="card" id="card5">
+                <span class="heart-icon">🥰</span>
+                <h2>Thank You</h2>
+                <p class="message">
+                    Thank you for seeing the best in me, and for being my safe place 
+                    in this chaotic world. I love you.
+                </p>
+                <div class="urdu-section">
+                    <p class="urdu-text">شکریہ تمہارا مجھے بے لوث چاہنے کا</p>
+                    <p class="translation">Thank you for loving me selflessly</p>
+                </div>
             </div>
         </div>
 
-        <!-- Card 2: Love Declaration -->
-        <div class="card" id="card2">
-            <div class="heart">💖</div>
-            <h2>My Love</h2>
-            <div class="message">
-                Every moment with you is a treasure I hold close to my heart.<br><br>
-                Your smile lights up my world, and your love gives me strength.<br>
-                I promise to cherish you every single day.
-            </div>
-            
-            <div class="urdu">
-                محبت ہی نہیں کرتا ہوں تجھ سے<br>
-                تیرے سوا کسی کا ہوں ہی نہیں
-            </div>
-            <div class="urdu-translation">
-                I don't just love you<br>
-                I am no one's but yours
-            </div>
-        </div>
-
-        <!-- Card 3: Promise -->
-        <div class="card" id="card3">
-            <div class="heart">✨</div>
-            <h2>My Promise</h2>
-            <div class="message">
-                I promise to be your shelter in every storm,<br>
-                Your comfort in every sorrow,<br>
-                Your joy in every moment.<br><br>
-                I will always choose you, again and again.
-            </div>
-            
-            <div class="urdu">
-                وعدہ ہے تجھ سے یہ میرا<br>
-                ہر دم تیرے ساتھ رہوں گا<br>
-                چاہے جہاں بھی جانا پڑے<br>
-                تیرا ہاتھ تھامے رہوں گا
-            </div>
-            <div class="urdu-translation">
-                This is my promise to you<br>
-                I will always be with you<br>
-                No matter where we have to go<br>
-                I will always hold your hand
-            </div>
-        </div>
-
-        <!-- Card 4: Forever Together -->
-        <div class="card" id="card4">
-            <div class="heart">🌹</div>
-            <h2>Forever Us</h2>
-            <div class="message">
-                Our story is my favorite.<br>
-                With every chapter, my love for you grows deeper.<br><br>
-                I can't wait to write the rest of our lives together,<br>
-                Creating memories that will last for eternity.
-            </div>
-            
-            <div class="urdu">
-                تم ہو تو ہر لمحہ ہے خوشی<br>
-                تم ہو تو ہر سانس ہے زندگی<br>
-                تم ہو تو ہر خواب ہے حقیقت<br>
-                تم ہو تو ہے میری ہر خواہش تکمیل
-            </div>
-            <div class="urdu-translation">
-                With you, every moment is happiness<br>
-                With you, every breath is life<br>
-                With you, every dream is reality<br>
-                With you, every desire of mine is fulfilled
-            </div>
-        </div>
-
-        <!-- Card 5: Gratitude -->
-        <div class="card" id="card5">
-            <div class="heart">🥰</div>
-            <h2>Thank You</h2>
-            <div class="message">
-                Thank you for seeing the best in me,<br>
-                Even when I can't see it myself.<br><br>
-                Thank you for loving me through my imperfections,<br>
-                And for being my safe place in this chaotic world.
-            </div>
-            
-            <div class="urdu">
-                شکریہ تمہارا میرے ہر غم کو بانٹنے کا<br>
-                شکریہ تمہارا میری ہر خوشی میں شامل ہونے کا<br>
-                شکریہ تمہارا مجھے بے لوث چاہنے کا<br>
-                شکریہ تمہارا میرے خوابوں کو پورا کرنے کا
-            </div>
-            <div class="urdu-translation">
-                Thank you for sharing every sorrow of mine<br>
-                Thank you for being a part of every happiness of mine<br>
-                Thank you for loving me selflessly<br>
-                Thank you for fulfilling my dreams
-            </div>
-        </div>
-
-        <!-- Music Control -->
-        <div class="music-control" id="musicToggle">
-            <i class="fas fa-volume-up"></i>
-        </div>
-
-        <!-- Card Indicators -->
-        <div class="card-indicators">
-            <div class="indicator active" data-card="1"></div>
-            <div class="indicator" data-card="2"></div>
-            <div class="indicator" data-card="3"></div>
-            <div class="indicator" data-card="4"></div>
-            <div class="indicator" data-card="5"></div>
-        </div>
-
-        <!-- Controls -->
         <div class="controls">
-            <button id="prevBtn"><i class="fas fa-arrow-left"></i> Previous</button>
-            <button id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+            <button class="btn-nav" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+            <div class="indicators" id="dotsContainer"></div>
+            <button class="btn-nav" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
         </div>
     </div>
 
-    <!-- Script -->
     <script>
-        // DOM elements
         const cards = document.querySelectorAll('.card');
-        const indicators = document.querySelectorAll('.indicator');
-        const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const musicToggle = document.getElementById('musicToggle');
+        const prevBtn = document.getElementById('prevBtn');
+        const dotsContainer = document.getElementById('dotsContainer');
         const bgMusic = document.getElementById('bgMusic');
-        
-        // Current card index
-        let currentCardIndex = 0;
-        let autoSlideInterval;
-        
-        // Initialize the app
-        function init() {
-            // Start auto slide
-            startAutoSlide();
-            
-            // Create floating elements
-            createFloatingElements();
-            
-            // Set up event listeners
-            prevBtn.addEventListener('click', showPrevCard);
-            nextBtn.addEventListener('click', showNextCard);
-            
-            // Indicator click events
-            indicators.forEach(indicator => {
-                indicator.addEventListener('click', function() {
-                    const cardIndex = parseInt(this.getAttribute('data-card')) - 1;
-                    showCard(cardIndex);
-                });
-            });
-            
-            // Music toggle
-            musicToggle.addEventListener('click', toggleMusic);
-            
-            // Ensure music plays (with user interaction requirement for some browsers)
-            document.body.addEventListener('click', function() {
-                if (bgMusic.paused) {
-                    bgMusic.play().catch(e => console.log("Autoplay prevented:", e));
-                }
-            }, { once: true });
-        }
-        
-        // Show specific card
-        function showCard(index) {
-            // Validate index
-            if (index < 0) index = cards.length - 1;
-            if (index >= cards.length) index = 0;
-            
-            // Update current card
-            currentCardIndex = index;
-            
-            // Update cards
-            cards.forEach((card, i) => {
-                card.classList.remove('active', 'previous');
-                
-                if (i === index) {
-                    card.classList.add('active');
-                } else if (i === (index - 1 + cards.length) % cards.length) {
-                    card.classList.add('previous');
-                }
-            });
-            
-            // Update indicators
-            indicators.forEach((indicator, i) => {
-                indicator.classList.toggle('active', i === index);
-            });
-            
-            // Reset auto slide timer
-            resetAutoSlide();
-        }
-        
-        // Show next card
-        function showNextCard() {
-            showCard(currentCardIndex + 1);
-        }
-        
-        // Show previous card
-        function showPrevCard() {
-            showCard(currentCardIndex - 1);
-        }
-        
-        // Start auto slide
-        function startAutoSlide() {
-            autoSlideInterval = setInterval(showNextCard, 8000); // Change card every 8 seconds
-        }
-        
-        // Reset auto slide timer
-        function resetAutoSlide() {
-            clearInterval(autoSlideInterval);
-            startAutoSlide();
-        }
-        
-        // Toggle music
-        function toggleMusic() {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
-            } else {
-                bgMusic.pause();
-                musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            }
-        }
-        
-        // Create floating hearts and flowers
-        function createFloatingElements() {
-            const heartIcons = ['❤️', '💖', '💗', '💓', '💞'];
-            const flowerIcons = ['🌹', '🌸', '🌺', '💐', '🌷'];
-            
-            // Create hearts
-            for (let i = 0; i < 15; i++) {
-                setTimeout(() => {
-                    const heart = document.createElement('div');
-                    heart.className = 'floating-heart';
-                    heart.innerHTML = heartIcons[Math.floor(Math.random() * heartIcons.length)];
-                    heart.style.left = Math.random() * 100 + 'vw';
-                    heart.style.fontSize = (20 + Math.random() * 20) + 'px';
-                    heart.style.animationDuration = (8 + Math.random() * 12) + 's';
-                    heart.style.animationDelay = Math.random() * 5 + 's';
-                    document.body.appendChild(heart);
-                    
-                    // Remove after animation completes
-                    setTimeout(() => {
-                        if (heart.parentNode) {
-                            heart.remove();
-                        }
-                    }, 20000);
-                }, i * 500);
-            }
-            
-            // Create flowers
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => {
-                    const flower = document.createElement('div');
-                    flower.className = 'floating-flower';
-                    flower.innerHTML = flowerIcons[Math.floor(Math.random() * flowerIcons.length)];
-                    flower.style.left = Math.random() * 100 + 'vw';
-                    flower.style.fontSize = (18 + Math.random() * 25) + 'px';
-                    flower.style.animationDuration = (12 + Math.random() * 15) + 's';
-                    flower.style.animationDelay = Math.random() * 8 + 's';
-                    document.body.appendChild(flower);
-                    
-                    // Remove after animation completes
-                    setTimeout(() => {
-                        if (flower.parentNode) {
-                            flower.remove();
-                        }
-                    }, 27000);
-                }, i * 800);
-            }
-            
-            // Continuously create new floating elements
-            setInterval(() => {
-                if (Math.random() > 0.5) {
-                    createFloatingHeart();
-                } else {
-                    createFloatingFlower();
-                }
-            }, 2000);
-        }
-        
-        function createFloatingHeart() {
-            const heartIcons = ['❤️', '💖', '💗'];
-            const heart = document.createElement('div');
-            heart.className = 'floating-heart';
-            heart.innerHTML = heartIcons[Math.floor(Math.random() * heartIcons.length)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = (20 + Math.random() * 20) + 'px';
-            heart.style.animationDuration = (8 + Math.random() * 12) + 's';
-            document.body.appendChild(heart);
-            
-            setTimeout(() => {
-                if (heart.parentNode) {
-                    heart.remove();
-                }
-            }, 20000);
-        }
-        
-        function createFloatingFlower() {
-            const flowerIcons = ['🌹', '🌸', '🌺'];
-            const flower = document.createElement('div');
-            flower.className = 'floating-flower';
-            flower.innerHTML = flowerIcons[Math.floor(Math.random() * flowerIcons.length)];
-            flower.style.left = Math.random() * 100 + 'vw';
-            flower.style.fontSize = (18 + Math.random() * 25) + 'px';
-            flower.style.animationDuration = (12 + Math.random() * 15) + 's';
-            document.body.appendChild(flower);
-            
-            setTimeout(() => {
-                if (flower.parentNode) {
-                    flower.remove();
-                }
-            }, 27000);
-        }
-        
-        // Initialize when page loads
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
+        let currentIndex = 0;
 
+        // Create Dots
+        cards.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if(i === 0) dot.classList.add('active');
+            dot.onclick = () => showCard(i);
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        function showCard(index) {
+            cards[currentIndex].classList.remove('active');
+            dots[currentIndex].classList.remove('active');
+            
+            currentIndex = index;
+            if(currentIndex >= cards.length) currentIndex = 0;
+            if(currentIndex < 0) currentIndex = cards.length - 1;
+
+            cards[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+        }
+
+        nextBtn.onclick = () => showCard(currentIndex + 1);
+        prevBtn.onclick = () => showCard(currentIndex - 1);
+
+        // Auto play (Requires interaction)
+        document.body.onclick = () => {
+            bgMusic.play();
+        };
+
+        // Floating Hearts & Flowers
+        function createFloatingElement() {
+            const icons = ['❤️', '💖', '🌸', '🌹', '✨', '🌷'];
+            const el = document.createElement('div');
+            el.className = 'floating';
+            el.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.fontSize = Math.random() * 20 + 20 + 'px';
+            el.style.duration = Math.random() * 3 + 4 + 's';
+            el.style.animationDuration = el.style.duration;
+            
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 5000);
+        }
+
+        setInterval(createFloatingElement, 400);
+
+        // Auto slide every 10 seconds
+        setInterval(() => showCard(currentIndex + 1), 10000);
+    </script>
 </body>
 </html>
