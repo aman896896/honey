@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Only You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #ff4d6d;
+            --secondary-color: #590d22;
+            --accent-color: #ffccd5;
+            --bg-gradient-start: #1a050b;
+            --bg-gradient-end: #000000;
+            --text-color: #fff0f3;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Ambient Background */
+        .ambient-light {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 25s infinite ease-in-out alternate;
+        }
+
+        .orb-1 {
+            width: 50vw;
+            height: 50vw;
+            background: var(--secondary-color);
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 40vw;
+            height: 40vw;
+            background: #800f2f;
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                transform: translateY(50px) scale(1.1);
+            }
+        }
+
+        /* Container */
+        #app-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Lyrics Display */
+        .lyrics-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            height: 400px;
+            /* Fixed height for stability */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .lyrics-line {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1),
+                transform 1s cubic-bezier(0.2, 0.8, 0.2, 1),
+                filter 1s ease;
+            filter: blur(10px);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lyrics-line.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+            z-index: 2;
+        }
+
+        .lyrics-line.exit {
+            opacity: 0;
+            transform: translateY(-30px) scale(1.05);
+            filter: blur(5px);
+        }
+
+        .lyrics-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            background: linear-gradient(to bottom right, #fff, #ffccd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .instrumental-indicator {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 600px) {
+            .lyrics-text {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Controls */
+        #start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #050102;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .start-btn {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover {
+            background: var(--primary-color);
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: absolute;
+            bottom: 40px;
+            width: 80%;
+            max-width: 400px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-color);
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bg-music">
+        <source src="Rishte_Naate.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="ambient-light">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div id="start-overlay">
+        <h1 style="font-family: 'Dancing Script', cursive; font-size: 3rem; margin-bottom: 1rem;">For You</h1>
+        <p style="opacity: 0.7;">Turn up your volume</p>
+        <button class="start-btn" id="start-btn">Start</button>
+    </div>
+
+    <div id="app-container">
+        <div class="lyrics-container" id="lyrics-wrapper">
+            <!-- Lyrics will be injected here -->
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="time-display" id="time-display">00:00 / 00:00</div>
+    </div>
+
+    <script>
+        // Data Structure for Lyrics
+        // Format: { time: seconds, text: "HTML String" }
+        const lyrics = [
+            { time: 0, text: "<div class='instrumental-indicator'>Music Starting...</div>" },
+            { time: 13, text: "Together time, I promise I'll let you go<br>You love me, together the... I know" },
+            { time: 28, text: "Chal main tere peechhe peechhe<br>Baaki saare bandhan tod doon" },
+            { time: 34, text: "Jo tere tak na jaaye<br>Us raste ko chhod doon" },
+            { time: 39, text: "Har khwab mera, umeed meri<br>Main tujhse jod doon" },
+            { time: 44, text: "Sab rishte naate hans ke tod doon" },
+            { time: 49, text: "Bas tujhse dil ka rishta jod doon, jod doon" },
+            { time: 56, text: "Sab rishte naate hans ke tod doon" },
+            { time: 60, text: "Bas tujhse dil ka rishta jod doon" },
+            { time: 65, text: "<div class='instrumental-indicator'>Music...</div>" },
+            { time: 88, text: "Jud gayi, jud gayi tujhse ye meri zindagi" },
+            { time: 93, text: "Maine to paayi tujh mein meri har khushi" },
+            { time: 98, text: "Keh gayi, keh gayi mujhse khud ye baatein teri" },
+            { time: 103, text: "Aksar khayalon mein hoon tere main kahin" },
+            { time: 108, text: "Dekhoon main tujhe lamha-lamha<br>Har pal apne seene mein rakhoon" },
+            { time: 114, text: "Har subah tujhse milne ki chahat mein main jagoon" },
+            { time: 119, text: "Ek tu hi to hai hothon ki hansi, chehre ka noor tu" },
+            { time: 125, text: "Sab rishte naate hans ke tod doon" },
+            { time: 129, text: "Bas tujhse dil ka rishta jod doon, jod doon" },
+            { time: 136, text: "Sab rishte naate hans ke tod doon" },
+            { time: 140, text: "Bas tujhse dil ka rishta jod doon" },
+            { time: 145, text: "<div class='instrumental-indicator'>Music...</div>" },
+            { time: 174, text: "Bas gayi, bas gayi mujh mein ab hai ye bas gayi" },
+            { time: 179, text: "Saanson se aaye hardam khushbu jo teri" },
+            { time: 184, text: "Chha gayi, chha gayi mujh par ye jo hai chha gayi" },
+            { time: 189, text: "Badli hai shayad ye to tere ishq ki" },
+            { time: 193, text: "Yahi hai mere dil ki hasrat<br>Pehron tujhse baatein main karoon" },
+            { time: 200, text: "Ho saari baatein tujh pe khatm<br>Aur tujhse ho shuru" },
+            { time: 205, text: "Phir waqt bhi ye ruk jaaye wahin<br>Ho jab bhi saath tu" },
+            { time: 210, text: "Sab rishte naate hans ke tod doon" },
+            { time: 214, text: "Bas tujhse dil ka rishta jod doon, jod doon" },
+            { time: 221, text: "Sab rishte naate hans ke tod doon" },
+            { time: 225, text: "Bas tujhse dil ka rishta jod doon" },
+            { time: 235, text: "I Love You" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('start-btn');
+            const overlay = document.getElementById('start-overlay');
+            const audio = document.getElementById('bg-music');
+            const lyricsWrapper = document.getElementById('lyrics-wrapper');
+            const progressBar = document.getElementById('progress-bar');
+            const timeDisplay = document.getElementById('time-display');
+
+            let currentIndex = -1;
+
+            // Generate Slide Elements
+            lyrics.forEach((line, index) => {
+                const el = document.createElement('div');
+                el.classList.add('lyrics-line');
+                el.innerHTML = `<div class="lyrics-text">${line.text}</div>`;
+                el.id = `line-${index}`;
+                lyricsWrapper.appendChild(el);
+            });
+
+            function formatTime(seconds) {
+                const min = Math.floor(seconds / 60);
+                const sec = Math.floor(seconds % 60);
+                return `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
+            }
+
+            function updateLyrics(currentTime) {
+                // Find the active segment
+                let activeIdx = -1;
+                for (let i = 0; i < lyrics.length; i++) {
+                    if (currentTime >= lyrics[i].time) {
+                        activeIdx = i;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (activeIdx !== currentIndex) {
+                    // Change Slide
+                    if (currentIndex !== -1) {
+                        const prevEl = document.getElementById(`line-${currentIndex}`);
+                        if (prevEl) {
+                            prevEl.classList.remove('active');
+                            prevEl.classList.add('exit');
+                        }
+                    }
+
+                    if (activeIdx !== -1) {
+                        const nextEl = document.getElementById(`line-${activeIdx}`);
+                        if (nextEl) {
+                            // Reset exit class if it was there (recycling not really happening here but good practice)
+                            nextEl.classList.remove('exit');
+                            nextEl.classList.add('active');
+                        }
+                    }
+
+                    currentIndex = activeIdx;
+                }
+            }
+
+            audio.addEventListener('timeupdate', () => {
+                const currentTime = audio.currentTime;
+                const duration = audio.duration || 1;
+
+                updateLyrics(currentTime);
+
+                // Update Progress
+                const progress = (currentTime / duration) * 100;
+                progressBar.style.width = `${progress}%`;
+                timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+            });
+
+            startBtn.addEventListener('click', () => {
+                audio.play().then(() => {
+                    overlay.style.opacity = 0;
+                    setTimeout(() => overlay.style.display = 'none', 800);
+                }).catch(e => {
+                    console.error("Audio failed", e);
+                    alert("Please interact with the page to allow audio playback.");
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
