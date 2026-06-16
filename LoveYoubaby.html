@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Only You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #590d22;
+            --accent: #ffccd5;
+            --text: #fff0f3;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(ellipse at center, #1a050b 0%, #000 100%);
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: none;
+        }
+
+        /* ── Ambient orbs ── */
+        .ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.35;
+            animation: orbFloat 20s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 55vw; height: 55vw; background: #590d22; top: -15%; left: -15%; }
+        .orb-2 { width: 45vw; height: 45vw; background: #800f2f; bottom: -15%; right: -15%; animation-delay: -7s; }
+        .orb-3 { width: 30vw; height: 30vw; background: #ff4d6d22; top: 40%; left: 35%; animation-delay: -12s; }
+        @keyframes orbFloat {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(40px) scale(1.12); }
+        }
+
+        /* ── Petal canvas ── */
+        #petal-canvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+        /* ── Fireflies ── */
+        .firefly-canvas { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
+
+        /* ── Cursor trail ── */
+        #cursor { position: fixed; pointer-events: none; z-index: 999; width: 12px; height: 12px; }
+        .trail-dot {
+            position: fixed; pointer-events: none; z-index: 998;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--primary); opacity: 0;
+            transform: translate(-50%, -50%);
+            animation: trailFade 0.6s ease-out forwards;
+        }
+        @keyframes trailFade { 0% { opacity: 0.8; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(0); } }
+
+        /* ── Start overlay ── */
+        #start-overlay {
+            position: fixed; inset: 0; background: #040001;
+            z-index: 200; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            transition: opacity 1s ease;
+        }
+        .start-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            background: linear-gradient(135deg, #ff4d6d, #ffccd5);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: titleGlow 3s infinite alternate;
+            margin-bottom: 0.5rem;
+        }
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 8px #ff4d6d88); }
+            100% { filter: drop-shadow(0 0 24px #ff4d6dcc); }
+        }
+        .start-sub { opacity: 0.55; font-size: 1rem; margin-bottom: 2.5rem; letter-spacing: 1px; }
+        .start-hearts { font-size: 2rem; margin-bottom: 1.5rem; animation: heartPulse 1.2s infinite; }
+        @keyframes heartPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        .start-btn {
+            background: transparent; border: 1.5px solid var(--primary);
+            color: var(--text); padding: 14px 44px; font-size: 1.1rem;
+            border-radius: 50px; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 3px; font-family: 'Outfit', sans-serif;
+            position: relative; overflow: hidden;
+        }
+        .start-btn::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--primary); transform: scaleX(0); transform-origin: left;
+            transition: transform 0.3s ease; z-index: -1;
+        }
+        .start-btn:hover::before { transform: scaleX(1); }
+        .start-btn:hover { box-shadow: 0 0 30px var(--primary); }
+
+        /* ── App container ── */
+        #app { position: relative; z-index: 10; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+
+        /* ── Pulse ring ── */
+        .pulse-ring {
+            position: absolute; width: 320px; height: 320px; border-radius: 50%;
+            border: 1px solid rgba(255,77,109,0.3);
+            animation: pulseRing 2.4s infinite ease-out;
+        }
+        .pulse-ring:nth-child(2) { animation-delay: 0.8s; }
+        .pulse-ring:nth-child(3) { animation-delay: 1.6s; }
+        @keyframes pulseRing {
+            0% { transform: scale(0.8); opacity: 0.6; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* ── Lyrics ── */
+        .lyrics-wrap {
+            position: relative; width: 100%; max-width: 720px;
+            height: 320px; display: flex; justify-content: center; align-items: center;
+        }
+        .lyrics-line {
+            position: absolute; width: 100%; text-align: center;
+            opacity: 0; pointer-events: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .lyrics-line.entering {
+            animation: lyricIn 0.9s cubic-bezier(0.22,1,0.36,1) forwards;
+        }
+        .lyrics-line.exiting {
+            animation: lyricOut 0.7s ease-in forwards;
+        }
+        @keyframes lyricIn {
+            0% { opacity: 0; transform: translateY(40px) scale(0.92); filter: blur(12px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        @keyframes lyricOut {
+            0% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+            100% { opacity: 0; transform: translateY(-35px) scale(1.06); filter: blur(8px); }
+        }
+        .lyrics-text {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.4rem, 4vw, 2.1rem);
+            line-height: 1.5;
+            background: linear-gradient(135deg, #fff 20%, #ffccd5 80%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .instrumental {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem; color: rgba(255,255,255,0.4);
+            animation: breathe 2.5s infinite;
+        }
+        @keyframes breathe { 0%,100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+
+        /* ── Progress ── */
+        .progress-wrap { position: absolute; bottom: 44px; width: 80%; max-width: 420px; }
+        .progress-bar-bg {
+            height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
+        }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #ff4d6d, #ff8fa3); transition: width 0.1s linear; border-radius: 2px; }
+        .time-display { text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.35); font-family: monospace; margin-top: 6px; }
+
+        /* ── PROPOSAL OVERLAY ── */
+        #proposal-overlay {
+            position: fixed; inset: 0; z-index: 300;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: radial-gradient(ellipse at center, #1a0010 0%, #000 100%);
+        }
+        #proposal-overlay.show { display: flex; animation: proposalFadeIn 1.5s ease forwards; }
+        @keyframes proposalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #firework-canvas { position: fixed; inset: 0; z-index: 301; pointer-events: none; }
+
+        .proposal-content { position: relative; z-index: 302; text-align: center; padding: 20px; }
+        .ring-emoji { font-size: clamp(4rem, 15vw, 7rem); animation: ringDrop 1s 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+        @keyframes ringDrop {
+            0% { transform: translateY(-120px) rotate(-20deg); opacity: 0; }
+            100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        }
+        .proposal-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.2rem, 8vw, 4.5rem);
+            background: linear-gradient(135deg, #ff4d6d, #ffccd5, #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: propTextIn 1.2s 1.2s ease both;
+            margin: 1rem 0 0.5rem;
+        }
+        .proposal-sub {
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            color: rgba(255,204,213,0.85);
+            animation: propTextIn 1.2s 1.8s ease both;
+            margin-bottom: 2rem;
+        }
+        @keyframes propTextIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .proposal-hearts { font-size: 2rem; animation: propTextIn 1s 2.4s ease both, floatHearts 3s 3.4s infinite; }
+        @keyframes floatHearts { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .proposal-name {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            color: #ff4d6d;
+            animation: propTextIn 1s 2.8s ease both;
+            margin-top: 1.5rem;
+            text-shadow: 0 0 30px rgba(255,77,109,0.6);
+        }
+    </style>
+</head>
+<body>
+
+<audio id="bg-music">
+    <source src="Rishte_Naate.mp3" type="audio/mp3">
+</audio>
+
+<!-- Ambient -->
+<div class="ambient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+
+<!-- Canvases -->
+<canvas id="petal-canvas"></canvas>
+<canvas id="firefly-canvas" class="firefly-canvas"></canvas>
+
+<!-- Cursor -->
+<div id="cursor">❤️</div>
+
+<!-- Start Screen -->
+<div id="start-overlay">
+    <div class="start-hearts">💕</div>
+    <div class="start-title">For You, My Love</div>
+    <p class="start-sub">🎵 Turn up your volume 🎵</p>
+    <button class="start-btn" id="start-btn">Begin ♥</button>
+</div>
+
+<!-- Main App -->
+<div id="app">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+
+    <div class="lyrics-wrap" id="lyrics-wrap"></div>
+
+    <div class="progress-wrap">
+        <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="time-display" id="time-display">00:00 / 00:00</div>
+    </div>
+</div>
+
+<!-- Proposal Overlay -->
+<div id="proposal-overlay">
+    <canvas id="firework-canvas"></canvas>
+    <div class="proposal-content">
+        <div class="ring-emoji">💍</div>
+        <div class="proposal-text">I Love You</div>
+        <div class="proposal-sub">"Bas tujhse dil ka rishta jod doon..."</div>
+        <div class="proposal-hearts">💗 💝 💖 💗</div>
+        <div class="proposal-name">Always & Forever ✨</div>
+    </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const lyrics = [
+    { time: 0,   text: "<div class='instrumental'>✨ Starting... ✨</div>" },
+    { time: 13,  text: "Together time, I promise I'll let you go<br>You love me, together the... I know" },
+    { time: 28,  text: "Chalu main tere peechhe peechhe<br>Baaki saare bandhan tod doon" },
+    { time: 34,  text: "Jo tere tak na jaaye<br>Us raste ko chhod doon" },
+    { time: 39,  text: "Har khwab mera, umeed meri<br>Main tujhse jod doon" },
+    { time: 44,  text: "Sab rishte naate hans ke tod doon" },
+    { time: 49,  text: "Bas tujhse dil ka rishta jod doon, jod doon" },
+    { time: 56,  text: "Sab rishte naate hans ke tod doon" },
+    { time: 60,  text: "Bas tujhse dil ka rishta jod doon" },
+    { time: 65,  text: "<div class='instrumental'>♪ ♫ ♪</div>" },
+    { time: 88,  text: "Jud gayi, jud gayi tujhse ye meri zindagi" },
+    { time: 93,  text: "Maine to paayi tujh mein meri har khushi" },
+    { time: 98,  text: "Keh gayi, keh gayi mujhse khud ye baatein teri" },
+    { time: 103, text: "Aksar khayalon mein hoon tere main kahin" },
+    { time: 108, text: "Dekhoon main tujhe lamha-lamha<br>Har pal apne seene mein rakhoon" },
+    { time: 114, text: "Har subah tujhse milne ki chahat mein main jagoon" },
+    { time: 119, text: "Ek tu hi to hai hothon ki hansi, chehre ka noor tu" },
+    { time: 125, text: "Sab rishte naate hans ke tod doon" },
+    { time: 129, text: "Bas tujhse dil ka rishta jod doon, jod doon" },
+    { time: 136, text: "Sab rishte naate hans ke tod doon" },
+    { time: 140, text: "Bas tujhse dil ka rishta jod doon" },
+    { time: 145, text: "<div class='instrumental'>♪ ♫ ♪</div>" },
+    { time: 172, text: "Bas gayi, bas gayi mujh mein ab hai ye bas gayi" },
+    { time: 177, text: "Saanson se aaye hardam khushbu jo teri" },
+    { time: 182, text: "Chha gayi, chha gayi mujh par ye jo hai chha gayi" },
+    { time: 187, text: "Badli hai shayad ye to tere ishq ki" },
+    { time: 191, text: "Yahi hai mere dil ki hasrat<br>Pehron tujhse baatein main karoon" },
+    { time: 198, text: "Ho saari baatein tujh pe khatm<br>Aur tujhse ho shuru" },
+    { time: 203, text: "Phir waqt bhi ye ruk jaaye wahin<br>Ho jab bhi saath tu" },
+    { time: 208, text: "Sab rishte naate hans ke tod doon" },
+    { time: 212, text: "Bas tujhse dil ka rishta jod doon, jod doon" },
+    { time: 219, text: "Sab rishte naate hans ke tod doon" },
+    { time: 223, text: "Bas tujhse dil ka rishta jod doon" },
+    { time: 228, text: "I Love You ❤️" }
+];
+
+/* ── PETAL SYSTEM ── */
+const petalCanvas = document.getElementById('petal-canvas');
+const pc = petalCanvas.getContext('2d');
+let petals = [];
+
+function resizeCanvases() {
+    petalCanvas.width = window.innerWidth;
+    petalCanvas.height = window.innerHeight;
+    fCanvas.width = window.innerWidth;
+    fCanvas.height = window.innerHeight;
+    const fw = document.getElementById('firework-canvas');
+    if (fw) { fw.width = window.innerWidth; fw.height = window.innerHeight; }
+}
+
+function createPetal() {
+    return {
+        x: Math.random() * window.innerWidth,
+        y: -20,
+        size: Math.random() * 12 + 6,
+        speedY: Math.random() * 1.2 + 0.5,
+        speedX: (Math.random() - 0.5) * 1.2,
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.06,
+        opacity: Math.random() * 0.5 + 0.3,
+        color: `hsl(${Math.random() * 30 + 340}, 80%, ${Math.random() * 20 + 65}%)`,
+        swing: Math.random() * 2 * Math.PI,
+        swingSpeed: Math.random() * 0.02 + 0.01
+    };
+}
+
+function drawPetal(p) {
+    pc.save();
+    pc.translate(p.x, p.y);
+    pc.rotate(p.rotation);
+    pc.globalAlpha = p.opacity;
+    pc.fillStyle = p.color;
+    pc.beginPath();
+    pc.ellipse(0, 0, p.size * 0.5, p.size, 0, 0, Math.PI * 2);
+    pc.fill();
+    pc.restore();
+}
+
+function animatePetals() {
+    pc.clearRect(0, 0, petalCanvas.width, petalCanvas.height);
+    if (petals.length < 60 && Math.random() < 0.3) petals.push(createPetal());
+    petals = petals.filter(p => p.y < window.innerHeight + 40);
+    petals.forEach(p => {
+        p.swing += p.swingSpeed;
+        p.x += Math.sin(p.swing) * 0.8 + p.speedX;
+        p.y += p.speedY;
+        p.rotation += p.rotationSpeed;
+        drawPetal(p);
+    });
+    requestAnimationFrame(animatePetals);
+}
+
+/* ── FIREFLY SYSTEM ── */
+const fCanvas = document.getElementById('firefly-canvas');
+const fc = fCanvas.getContext('2d');
+let flies = [];
+
+function createFly() {
+    return {
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 2.5 + 1,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        alpha: 0,
+        maxAlpha: Math.random() * 0.6 + 0.2,
+        fadeIn: true,
+        lifeSpeed: Math.random() * 0.008 + 0.003
+    };
+}
+
+function animateFlies() {
+    fc.clearRect(0, 0, fCanvas.width, fCanvas.height);
+    if (flies.length < 40) flies.push(createFly());
+    flies = flies.filter(f => !(f.alpha <= 0 && !f.fadeIn));
+    flies.forEach(f => {
+        f.x += f.vx; f.y += f.vy;
+        if (f.fadeIn) { f.alpha += f.lifeSpeed; if (f.alpha >= f.maxAlpha) f.fadeIn = false; }
+        else { f.alpha -= f.lifeSpeed * 0.6; }
+        fc.save();
+        fc.globalAlpha = f.alpha;
+        const g = fc.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 3);
+        g.addColorStop(0, '#ff8fa3');
+        g.addColorStop(1, 'transparent');
+        fc.fillStyle = g;
+        fc.beginPath();
+        fc.arc(f.x, f.y, f.r * 3, 0, Math.PI * 2);
+        fc.fill();
+        fc.restore();
+    });
+    requestAnimationFrame(animateFlies);
+}
+
+/* ── CURSOR TRAIL ── */
+let cursorEl = document.getElementById('cursor');
+cursorEl.style.cssText = 'position:fixed;pointer-events:none;z-index:999;font-size:16px;transform:translate(-50%,-50%);';
+document.addEventListener('mousemove', e => {
+    cursorEl.style.left = e.clientX + 'px';
+    cursorEl.style.top = e.clientY + 'px';
+    if (Math.random() < 0.4) spawnTrail(e.clientX, e.clientY);
+});
+function spawnTrail(x, y) {
+    const symbols = ['♥','✦','·','✿','*'];
+    const d = document.createElement('div');
+    d.style.cssText = `position:fixed;pointer-events:none;z-index:998;left:${x}px;top:${y}px;font-size:${8+Math.random()*10}px;color:hsl(${340+Math.random()*30},80%,75%);transform:translate(-50%,-50%);transition:all 0.6s ease;opacity:0.8;`;
+    d.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    document.body.appendChild(d);
+    requestAnimationFrame(() => { d.style.opacity = '0'; d.style.transform = `translate(-50%,-50%) translateY(-${20+Math.random()*20}px) scale(0.5)`; });
+    setTimeout(() => d.remove(), 650);
+}
+
+/* ── FIREWORKS ── */
+const fwCanvas = document.getElementById('firework-canvas');
+const fwc = fwCanvas.getContext('2d');
+let fwParticles = [];
+let fwRunning = false;
+
+function launchFirework() {
+    const x = Math.random() * fwCanvas.width;
+    const y = Math.random() * fwCanvas.height * 0.6;
+    const colors = ['#ff4d6d','#ff8fa3','#ffccd5','#ff006e','#ff99aa','#fff','#ffd700'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    for (let i = 0; i < 60; i++) {
+        const angle = (Math.PI * 2 / 60) * i;
+        const speed = Math.random() * 4 + 1.5;
+        fwParticles.push({
+            x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+            alpha: 1, color, size: Math.random() * 3 + 1, gravity: 0.06
+        });
+    }
+}
+
+function animateFireworks() {
+    if (!fwRunning) return;
+    fwc.fillStyle = 'rgba(0,0,0,0.15)';
+    fwc.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
+    fwParticles = fwParticles.filter(p => p.alpha > 0.01);
+    fwParticles.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
+        p.vx *= 0.98; p.vy *= 0.98;
+        p.alpha *= 0.965;
+        fwc.save();
+        fwc.globalAlpha = p.alpha;
+        fwc.fillStyle = p.color;
+        fwc.beginPath();
+        fwc.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        fwc.fill();
+        fwc.restore();
+    });
+    requestAnimationFrame(animateFireworks);
+}
+
+function startFireworks() {
+    fwRunning = true;
+    fwCanvas.width = window.innerWidth;
+    fwCanvas.height = window.innerHeight;
+    animateFireworks();
+    const interval = setInterval(launchFirework, 500);
+    setTimeout(() => clearInterval(interval), 12000);
+}
+
+/* ── LYRICS ENGINE ── */
+document.addEventListener('DOMContentLoaded', () => {
+    resizeCanvases();
+    window.addEventListener('resize', resizeCanvases);
+    animatePetals();
+    animateFlies();
+
+    const startBtn = document.getElementById('start-btn');
+    const overlay = document.getElementById('start-overlay');
+    const audio = document.getElementById('bg-music');
+    const wrap = document.getElementById('lyrics-wrap');
+    const progressBar = document.getElementById('progress-bar');
+    const timeDisplay = document.getElementById('time-display');
+    const proposalOverlay = document.getElementById('proposal-overlay');
+
+    let currentIdx = -1;
+    let proposalShown = false;
+
+    lyrics.forEach((line, i) => {
+        const el = document.createElement('div');
+        el.className = 'lyrics-line';
+        el.id = `line-${i}`;
+        el.innerHTML = `<div class="lyrics-text">${line.text}</div>`;
+        wrap.appendChild(el);
+    });
+
+    function fmt(s) {
+        const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+        return `${m < 10 ? '0' + m : m}:${sec < 10 ? '0' + sec : sec}`;
+    }
+
+    function showLine(idx) {
+        if (idx === currentIdx) return;
+        if (currentIdx >= 0) {
+            const prev = document.getElementById(`line-${currentIdx}`);
+            if (prev) {
+                prev.classList.remove('entering');
+                prev.classList.add('exiting');
+                setTimeout(() => { prev.classList.remove('exiting'); prev.style.opacity = '0'; }, 700);
+            }
+        }
+        if (idx >= 0) {
+            const next = document.getElementById(`line-${idx}`);
+            if (next) {
+                next.style.opacity = '';
+                next.classList.remove('exiting');
+                next.classList.add('entering');
+            }
+        }
+        currentIdx = idx;
+    }
+
+    audio.addEventListener('timeupdate', () => {
+        const t = audio.currentTime, dur = audio.duration || 1;
+        let active = -1;
+        for (let i = 0; i < lyrics.length; i++) {
+            if (t >= lyrics[i].time) active = i; else break;
+        }
+        showLine(active);
+        progressBar.style.width = `${(t / dur) * 100}%`;
+        timeDisplay.textContent = `${fmt(t)} / ${fmt(dur)}`;
+
+        // PROPOSAL at 228s
+        if (t >= 228 && !proposalShown) {
+            proposalShown = true;
+            setTimeout(() => {
+                proposalOverlay.classList.add('show');
+                startFireworks();
+            }, 800);
+        }
+    });
+
+    startBtn.addEventListener('click', () => {
+        audio.play().then(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 1000);
+        }).catch(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 1000);
+        });
+    });
+});
+</script>
+</body>
+</html>
