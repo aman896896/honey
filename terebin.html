@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Tere Bin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --secondary-color: #590d22;
+            --accent-color: #ffccd5;
+            --bg-gradient-start: #1a050b;
+            --bg-gradient-end: #000000;
+            --text-color: #fff0f3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #000;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Dynamic Background Image */
+        #bg-image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            filter: brightness(0.4) contrast(1.2); /* Darken image to make text readable */
+        }
+
+        .bg-image.active {
+            opacity: 1;
+        }
+
+        /* Particle Canvas */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Ambient Orbs */
+        .ambient-light {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            z-index: 3;
+            pointer-events: none;
+            overflow: hidden;
+            mix-blend-mode: screen;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 25s infinite ease-in-out alternate;
+        }
+
+        .orb-1 {
+            width: 50vw; height: 50vw; background: var(--secondary-color); top: -10%; left: -10%;
+        }
+        .orb-2 {
+            width: 40vw; height: 40vw; background: #800f2f; bottom: -10%; right: -10%; animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(50px) scale(1.1); }
+        }
+
+        #app-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .lyrics-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .lyrics-line {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), filter 1s ease;
+            filter: blur(10px);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lyrics-line.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+            z-index: 2;
+        }
+
+        .lyrics-line.exit {
+            opacity: 0;
+            transform: translateY(-30px) scale(1.05);
+            filter: blur(5px);
+        }
+
+        .lyrics-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            background: linear-gradient(to bottom right, #ffffff, #ffd6df);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .instrumental-indicator {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        @media (max-width: 600px) {
+            .lyrics-text { font-size: 1.8rem; }
+        }
+
+        /* Controls */
+        #start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #050102;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .start-btn {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover {
+            background: var(--primary-color);
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: absolute;
+            bottom: 40px;
+            width: 80%;
+            max-width: 400px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-color);
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bg-music">
+        <source src="TereBin.mp3" type="audio/mp3">
+    </audio>
+
+    <div id="bg-image-container">
+        <!-- Images will be injected here -->
+    </div>
+
+    <!-- Particle System Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="ambient-light">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div id="start-overlay">
+        <h1 style="font-family: 'Dancing Script', cursive; font-size: 4rem; margin-bottom: 1rem; color: #ffccd5;">Tere Bin</h1>
+        <p style="opacity: 0.8; font-size: 1.2rem;">Turn up your volume</p>
+        <button class="start-btn" id="start-btn">Start</button>
+    </div>
+
+    <div id="app-container">
+        <div class="lyrics-container" id="lyrics-wrapper">
+            <!-- Lyrics will be injected here -->
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="time-display" id="time-display">00:00 / 00:00</div>
+    </div>
+
+    <script>
+        // Particle System Setup
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * -1 - 0.5;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.color = 'rgba(255, 204, 213, ' + (Math.random() * 0.5 + 0.2) + ')';
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.width * canvas.height) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles();
+        animateParticles();
+
+        // Adjust timestamps based on the actual song
+        const lyrics = [
+            { time: 0, text: "<div class='instrumental-indicator'>Music...</div>", image: "img_01.png" },
+            { time: 15, text: "O re piya, main taan tere layi, saara taan jagun", image: "img_02.png" },
+            { time: 27, text: "Jithe jave tu, othe jave dil, das ki main karun", image: "img_03.png" },
+            { time: 35, text: "Jo tu rus janiye, dil ye tut janiye", image: "img_04.png" },
+            { time: 41, text: "Tere sang sang raha, sari kat janiye", image: "img_05.png" },
+            { time: 57, text: "Main taan tere naal rehna, maan ehna mera kehna", image: "img_06.png" },
+            { time: 63, text: "Meri akhiyo se hona kadi door na", image: "img_07.png" },
+            { time: 67, text: "Tere bin... Tere Bin...", image: "img_08.png" },
+            { time: 70, text: "Tere bin nai lagda dil mera dholna", image: "img_09.png" },
+            { time: 76, text: "Tere bin nai lagda dil mera dholna", image: "img_10.png" },
+            { time: 81, text: "Sab chad jaye tu na mainu chhodna", image: "img_11.png" },
+            { time: 86, text: "Tere bin nai lagda dil mera dholna", image: "img_12.png" },
+            { time: 91, text: "Nai lagda, nai lagda, nai lagda, nai lagda...", image: "img_13.png" },
+            { time: 102, text: "Tere sang sang reh ke main rang jaaun tere rang", image: "img_14.png" },
+            { time: 108, text: "Teri neend se khwab main apna jod loon", image: "img_15.png" },
+            { time: 113, text: "Tu saath na ho to char kadam na chal paun", image: "img_16.png" },
+            { time: 118, text: "Teri raah pe raah main apni mod doon", image: "img_17.png" },
+            { time: 123, text: "O jag bhul jaye mujhe tum nahi bhulna", image: "img_18.png" },
+            { time: 128, text: "Tere sang jeena mera, tere sang dhalna", image: "img_19.png" },
+            { time: 133, text: "Sachi chahaton ka hota koya mol na", image: "img_20.png" },
+            { time: 138, text: "Tere bin... Tere Bin...", image: "img_21.png" },
+            { time: 141, text: "Tere bin nai lagda dil mera dholna", image: "img_22.png" },
+            { time: 147, text: "Tere bin nai lagda dil mera dholna", image: "img_23.png" },
+            { time: 152, text: "Sab chad jaye tu na mainu chhodna", image: "img_24.png" },
+            { time: 157, text: "Tere bin nai lagda dil mera dholna", image: "img_25.png" },
+            { time: 162, text: "Jaaniya... haaniya...", image: "img_26.png" },
+            { time: 167, text: "Tu vi sikh kadi dukh sukh pholna", image: "img_27.png" },
+            { time: 172, text: "Tere bin nai lagda dil mera dholna", image: "img_28.png" },
+            { time: 178, text: "Tere bin nai lagda dil mera dholna", image: "img_29.png" },
+            { time: 183, text: "Sab chad jaye tu na mainu chhodna", image: "img_30.png" },
+            { time: 188, text: "Tere bin nai lagda dil mera dholna", image: "img_31.png" },
+            { time: 195, text: "<div class='instrumental-indicator'>Music / Outro</div>", image: "img_32.png" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('start-btn');
+            const overlay = document.getElementById('start-overlay');
+            const audio = document.getElementById('bg-music');
+            const lyricsWrapper = document.getElementById('lyrics-wrapper');
+            const bgImageContainer = document.getElementById('bg-image-container');
+            const progressBar = document.getElementById('progress-bar');
+            const timeDisplay = document.getElementById('time-display');
+
+            let currentIndex = -1;
+
+            // Generate Slide Elements and Images
+            lyrics.forEach((line, index) => {
+                /*
+                // Text
+                const el = document.createElement('div');
+                el.classList.add('lyrics-line');
+                el.innerHTML = `<div class="lyrics-text">${line.text}</div>`;
+                el.id = `line-${index}`;
+                lyricsWrapper.appendChild(el);
+                */
+
+                // Image
+                const imgEl = document.createElement('img');
+                imgEl.src = `images/${line.image}`;
+                imgEl.classList.add('bg-image');
+                imgEl.id = `bg-${index}`;
+                
+                // Fallback image handling
+                imgEl.onerror = function() {
+                    this.src = 'images/img_01.png'; // fallback to first image if not found
+                };
+
+                bgImageContainer.appendChild(imgEl);
+            });
+
+            function formatTime(seconds) {
+                if (isNaN(seconds)) return "00:00";
+                const min = Math.floor(seconds / 60);
+                const sec = Math.floor(seconds % 60);
+                return `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
+            }
+
+            function updateLyrics(currentTime) {
+                let activeIdx = -1;
+                for (let i = 0; i < lyrics.length; i++) {
+                    if (currentTime >= lyrics[i].time) {
+                        activeIdx = i;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (activeIdx !== currentIndex) {
+                    if (currentIndex !== -1) {
+                        // Hide old text
+                        const prevEl = document.getElementById(`line-${currentIndex}`);
+                        if (prevEl) {
+                            prevEl.classList.remove('active');
+                            prevEl.classList.add('exit');
+                        }
+                        // Hide old image
+                        const prevImg = document.getElementById(`bg-${currentIndex}`);
+                        if (prevImg) {
+                            prevImg.classList.remove('active');
+                        }
+                    }
+
+                    if (activeIdx !== -1) {
+                        // Show new text
+                        const nextEl = document.getElementById(`line-${activeIdx}`);
+                        if (nextEl) {
+                            nextEl.classList.remove('exit');
+                            nextEl.classList.add('active');
+                        }
+                        // Show new image
+                        const nextImg = document.getElementById(`bg-${activeIdx}`);
+                        if (nextImg) {
+                            nextImg.classList.add('active');
+                        }
+                    }
+
+                    currentIndex = activeIdx;
+                }
+            }
+
+            audio.addEventListener('timeupdate', () => {
+                const currentTime = audio.currentTime;
+                const duration = audio.duration || 1;
+
+                updateLyrics(currentTime);
+
+                const progress = (currentTime / duration) * 100;
+                progressBar.style.width = `${progress}%`;
+                timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+            });
+
+            startBtn.addEventListener('click', () => {
+                audio.play().then(() => {
+                    overlay.style.opacity = 0;
+                    setTimeout(() => overlay.style.display = 'none', 800);
+                }).catch(e => {
+                    console.error("Audio failed", e);
+                    alert("Please interact with the page to allow audio playback.");
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
