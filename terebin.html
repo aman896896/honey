@@ -163,10 +163,25 @@
             font-size: 2.5rem;
             line-height: 1.4;
             margin-bottom: 1rem;
-            background: linear-gradient(to bottom right, #ffffff, #ffd6df);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.8), 0 0 20px rgba(255, 77, 109, 0.5);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.1s ease-out, text-shadow 0.1s ease-out;
+        }
+
+        .lyrics-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .lyrics-line.active .lyrics-word {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .instrumental-indicator {
@@ -346,37 +361,37 @@
         // Adjust timestamps based on the actual song
         const lyrics = [
             { time: 0, text: "<div class='instrumental-indicator'>Music...</div>", image: "img_01.png" },
-            { time: 15, text: "O re piya, main taan tere layi, saara taan jagun", image: "img_02.png" },
-            { time: 27, text: "Jithe jave tu, othe jave dil, das ki main karun", image: "img_03.png" },
-            { time: 35, text: "Jo tu rus janiye, dil ye tut janiye", image: "img_04.png" },
-            { time: 41, text: "Tere sang sang raha, sari kat janiye", image: "img_05.png" },
-            { time: 57, text: "Main taan tere naal rehna, maan ehna mera kehna", image: "img_06.png" },
-            { time: 63, text: "Meri akhiyo se hona kadi door na", image: "img_07.png" },
-            { time: 67, text: "Tere bin... Tere Bin...", image: "img_08.png" },
-            { time: 70, text: "Tere bin nai lagda dil mera dholna", image: "img_09.png" },
-            { time: 76, text: "Tere bin nai lagda dil mera dholna", image: "img_10.png" },
-            { time: 81, text: "Sab chad jaye tu na mainu chhodna", image: "img_11.png" },
-            { time: 86, text: "Tere bin nai lagda dil mera dholna", image: "img_12.png" },
-            { time: 91, text: "Nai lagda, nai lagda, nai lagda, nai lagda...", image: "img_13.png" },
-            { time: 102, text: "Tere sang sang reh ke main rang jaaun tere rang", image: "img_14.png" },
-            { time: 108, text: "Teri neend se khwab main apna jod loon", image: "img_15.png" },
-            { time: 113, text: "Tu saath na ho to char kadam na chal paun", image: "img_16.png" },
-            { time: 118, text: "Teri raah pe raah main apni mod doon", image: "img_17.png" },
-            { time: 123, text: "O jag bhul jaye mujhe tum nahi bhulna", image: "img_18.png" },
-            { time: 128, text: "Tere sang jeena mera, tere sang dhalna", image: "img_19.png" },
-            { time: 133, text: "Sachi chahaton ka hota koya mol na", image: "img_20.png" },
-            { time: 138, text: "Tere bin... Tere Bin...", image: "img_21.png" },
-            { time: 141, text: "Tere bin nai lagda dil mera dholna", image: "img_22.png" },
-            { time: 147, text: "Tere bin nai lagda dil mera dholna", image: "img_23.png" },
-            { time: 152, text: "Sab chad jaye tu na mainu chhodna", image: "img_24.png" },
-            { time: 157, text: "Tere bin nai lagda dil mera dholna", image: "img_25.png" },
-            { time: 162, text: "Jaaniya... haaniya...", image: "img_26.png" },
-            { time: 167, text: "Tu vi sikh kadi dukh sukh pholna", image: "img_27.png" },
-            { time: 172, text: "Tere bin nai lagda dil mera dholna", image: "img_28.png" },
-            { time: 178, text: "Tere bin nai lagda dil mera dholna", image: "img_29.png" },
-            { time: 183, text: "Sab chad jaye tu na mainu chhodna", image: "img_30.png" },
-            { time: 188, text: "Tere bin nai lagda dil mera dholna", image: "img_31.png" },
-            { time: 195, text: "<div class='instrumental-indicator'>Music / Outro</div>", image: "img_32.png" }
+            { time: 10, text: "O re piya, main taan tere layi, saara taan jagun", image: "img_02.png" },
+            { time: 21, text: "Jithe jave tu, othe jave dil, das ki main karun", image: "img_03.png" },
+            { time: 32, text: "Jo tu rus janiye, dil ye tut janiye", image: "img_04.png" },
+            { time: 38, text: "Tere sang sang raha, sari kat janiye", image: "img_05.png" },
+            { time: 43, text: "Main taan tere naal rehna, maan ehna mera kehna", image: "img_06.png" },
+            { time: 49, text: "Meri akhiyo se hona kadi door na", image: "img_07.png" },
+            { time: 54, text: "Tere bin... Tere Bin...", image: "img_08.png" },
+            { time: 61, text: "Tere bin nai lagda dil mera dholna", image: "img_09.png" },
+            { time: 65, text: "Tere bin nai lagda dil mera dholna", image: "img_10.png" },
+            { time: 71, text: "Sab chad jaye tu na mainu chhodna", image: "img_11.png" },
+            { time: 76, text: "Tere bin nai lagda dil mera dholna", image: "img_12.png" },
+            { time: 82, text: "Nai lagda, nai lagda, nai lagda, nai lagda...", image: "img_13.png" },
+            { time: 104, text: "Tere sang sang reh ke main rang jaaun tere rang", image: "img_14.png" },
+            { time: 110, text: "Teri neend se khwab main apna jod loon", image: "img_15.png" },
+            { time: 116, text: "Tu saath na ho to char kadam na chal paun", image: "img_16.png" },
+            { time: 121, text: "Teri raah pe raah main apni mod doon", image: "img_17.png" },
+            { time: 127, text: "O jag bhul jaye mujhe tum nahi bhulna", image: "img_18.png" },
+            { time: 132, text: "Tere sang jeena mera, tere sang dhalna", image: "img_19.png" },
+            { time: 137, text: "Sachi chahaton ka hota koya mol na", image: "img_20.png" },
+            { time: 142, text: "Tere bin... Tere Bin...", image: "img_21.png" },
+            { time: 149, text: "Tere bin nai lagda dil mera dholna", image: "img_22.png" },
+            { time: 152, text: "Tere bin nai lagda dil mera dholna", image: "img_23.png" },
+            { time: 159, text: "Sab chad jaye tu na mainu chhodna", image: "img_24.png" },
+            { time: 164, text: "Tere bin nai lagda dil mera dholna", image: "img_25.png" },
+            { time: 170, text: "Jaaniya... haaniya...", image: "img_26.png" },
+            { time: 177, text: "Tu vi sikh kadi dukh sukh pholna", image: "img_27.png" },
+            { time: 181, text: "Tere bin nai lagda dil mera dholna", image: "img_28.png" },
+            { time: 186, text: "Tere bin nai lagda dil mera dholna", image: "img_29.png" },
+            { time: 193, text: "Sab chad jaye tu na mainu chhodna", image: "img_30.png" },
+            { time: 198, text: "Tere bin nai lagda dil mera dholna", image: "img_31.png" },
+            { time: 199, text: "<div class='instrumental-indicator'>Music / Outro</div>", image: "img_32.png" }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -392,14 +407,24 @@
 
             // Generate Slide Elements and Images
             lyrics.forEach((line, index) => {
-                /*
                 // Text
                 const el = document.createElement('div');
                 el.classList.add('lyrics-line');
-                el.innerHTML = `<div class="lyrics-text">${line.text}</div>`;
+                
+                // Split text into words for staggered animation, ignore if it contains HTML
+                let formattedText = '';
+                if (line.text.includes('<div')) {
+                    formattedText = line.text;
+                } else {
+                    const words = line.text.split(' ');
+                    formattedText = words.map((word, i) => 
+                        `<span class="lyrics-word" style="transition-delay: ${i * 0.15}s">${word}</span>`
+                    ).join('');
+                }
+
+                el.innerHTML = `<div class="lyrics-text" id="text-container-${index}">${formattedText}</div>`;
                 el.id = `line-${index}`;
                 lyricsWrapper.appendChild(el);
-                */
 
                 // Image
                 const imgEl = document.createElement('img');
@@ -476,7 +501,23 @@
                 timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
             });
 
+            let audioCtx, analyser, dataArray;
+            let audioReactiveEnabled = false;
+
             startBtn.addEventListener('click', () => {
+                // Initialize Web Audio API for Audio-reactive text
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const audioSrc = audioCtx.createMediaElementSource(audio);
+                    analyser = audioCtx.createAnalyser();
+                    audioSrc.connect(analyser);
+                    analyser.connect(audioCtx.destination);
+                    analyser.fftSize = 256;
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+                    audioReactiveEnabled = true;
+                }
+
                 audio.play().then(() => {
                     overlay.style.opacity = 0;
                     setTimeout(() => overlay.style.display = 'none', 800);
@@ -485,6 +526,31 @@
                     alert("Please interact with the page to allow audio playback.");
                 });
             });
+
+            // Audio reactive loop
+            function audioLoop() {
+                if (audioReactiveEnabled && currentIndex !== -1) {
+                    analyser.getByteFrequencyData(dataArray);
+                    // Calculate average bass/mid frequencies (first 30 bins roughly)
+                    let sum = 0;
+                    for(let i=0; i<30; i++) {
+                        sum += dataArray[i];
+                    }
+                    const average = sum / 30;
+                    
+                    // Scale factor based on audio volume (average is 0-255)
+                    const scale = 1 + (average / 255) * 0.25; // Max scale 1.25
+                    const glow = (average / 255) * 50; // Max glow 50px
+
+                    const activeTextContainer = document.getElementById(`text-container-${currentIndex}`);
+                    if (activeTextContainer) {
+                        activeTextContainer.style.transform = `scale(${scale})`;
+                        activeTextContainer.style.textShadow = `0 0 ${glow}px rgba(255, 77, 109, 1), 0 0 ${glow/2}px rgba(255, 255, 255, 0.8)`;
+                    }
+                }
+                requestAnimationFrame(audioLoop);
+            }
+            audioLoop();
         });
     </script>
 </body>
