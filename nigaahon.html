@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Nigaahon Ka Thikana - निगाहों का ठिकाना</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Rozha+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #c084fc;
+            --secondary-color: #3b0764;
+            --accent-pink: #f472b6;
+            --starlight-gold: #fde047;
+            --bg-gradient-start: #0f051d;
+            --bg-gradient-end: #030008;
+            --text-color: #faf5ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #000;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            user-select: none;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+            background: linear-gradient(180deg, rgba(15, 5, 29, 0.85) 0%, rgba(0,0,0,0) 100%);
+            z-index: 50;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.65rem;
+            color: var(--starlight-gold);
+            text-decoration: none;
+            text-shadow: 0 0 12px rgba(192, 132, 252, 0.8);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.7);
+            border-color: transparent;
+        }
+
+        /* Dynamic Cartoon Backgrounds */
+        #bg-image-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(1.06);
+            transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1), transform 9s ease-out;
+            filter: brightness(0.42) contrast(1.15) saturate(1.15);
+        }
+
+        .bg-image.active {
+            opacity: 1;
+            transform: scale(1.0);
+        }
+
+        /* Particle Canvas */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Ambient Orbs */
+        .ambient-light {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            z-index: 3;
+            pointer-events: none;
+            overflow: hidden;
+            mix-blend-mode: screen;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(95px);
+            opacity: 0.32;
+            animation: float 24s infinite ease-in-out alternate;
+        }
+
+        .orb-1 {
+            width: 55vw; height: 55vw;
+            background: var(--secondary-color);
+            top: -15%; left: -15%;
+        }
+
+        .orb-2 {
+            width: 45vw; height: 45vw;
+            background: #701a75;
+            bottom: -15%; right: -15%;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 35vw; height: 35vw;
+            background: #1e1b4b;
+            top: 40%; left: 55%;
+            opacity: 0.25;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1) rotate(0deg); }
+            100% { transform: translateY(50px) scale(1.15) rotate(20deg); }
+        }
+
+        /* Main Container */
+        #app-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        /* Section Pill Badge */
+        .section-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--starlight-gold);
+            background: rgba(253, 224, 71, 0.12);
+            border: 1px solid rgba(253, 224, 71, 0.35);
+            padding: 6px 18px;
+            border-radius: 50px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.6s ease;
+        }
+
+        .section-badge.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Lyrics Container */
+        .lyrics-container {
+            position: relative;
+            width: 100%;
+            max-width: 950px;
+            height: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px;
+        }
+
+        .lyrics-line {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(40px) scale(0.92);
+            transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        filter 0.9s ease;
+            filter: blur(12px);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+        }
+
+        .lyrics-line.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+            z-index: 2;
+        }
+
+        .lyrics-line.exit {
+            opacity: 0;
+            transform: translateY(-40px) scale(1.06);
+            filter: blur(8px);
+        }
+
+        .lyrics-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            line-height: 1.38;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            text-shadow: 0 0 16px rgba(192, 132, 252, 0.9),
+                         0 0 32px rgba(244, 114, 182, 0.6),
+                         0 0 48px rgba(253, 224, 71, 0.35);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 14px;
+            transition: transform 0.1s ease-out, text-shadow 0.1s ease-out;
+        }
+
+        .lyrics-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(22px) scale(0.85);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .lyrics-line.active .lyrics-word {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .instrumental-indicator {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.4rem;
+            color: var(--starlight-gold);
+            text-shadow: 0 0 24px rgba(192, 132, 252, 0.95);
+            animation: pulse 2.2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.65; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        @media (max-width: 768px) {
+            .lyrics-text { font-size: 1.85rem; }
+            .top-nav { padding: 12px 16px; }
+            .nav-link { font-size: 0.72rem; padding: 4px 8px; }
+        }
+
+        /* Controls & Start Screen */
+        #start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #240a3e 0%, #06010f 100%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .song-title-hindi {
+            font-family: 'Rozha One', 'Playfair Display', serif;
+            font-size: 4.2rem;
+            margin-bottom: 0.4rem;
+            color: #faf5ff;
+            text-shadow: 0 0 35px rgba(192, 132, 252, 0.85), 0 0 15px rgba(244, 114, 182, 0.7);
+            letter-spacing: 1px;
+        }
+
+        .song-album {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--starlight-gold);
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        .song-genre {
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            color: rgba(250, 245, 255, 0.7);
+            margin-bottom: 35px;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(236, 72, 153, 0.35));
+            border: 2px solid var(--primary-color);
+            color: var(--text-color);
+            padding: 16px 52px;
+            font-size: 1.25rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 0 30px rgba(192, 132, 252, 0.4);
+            outline: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .start-btn:hover {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: #fff;
+            box-shadow: 0 0 50px rgba(192, 132, 252, 0.95);
+            transform: scale(1.05);
+        }
+
+        /* Player Bottom Controls */
+        .bottom-controls {
+            position: absolute;
+            bottom: 30px;
+            width: 85%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 20;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: height 0.2s ease;
+        }
+
+        .progress-container:hover {
+            height: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #c084fc, #f472b6, #fde047);
+            box-shadow: 0 0 12px rgba(192, 132, 252, 0.9);
+            transition: width 0.1s linear;
+        }
+
+        .time-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            box-shadow: 0 0 20px rgba(192, 132, 252, 0.8);
+            border-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Audio Player -->
+    <audio id="bg-music" preload="auto">
+        <source src="Nigaahon_Ka_Thikana.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Top Navigation Header -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-logo">✨ Nigaahon Ka Thikana</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="nigaahon.html" class="nav-link active">Nigaahon</a>
+            <a href="dil_ka.html" class="nav-link">Dil Ka Thikana</a>
+            <a href="terebin.html" class="nav-link">Tere Bin</a>
+        </div>
+    </nav>
+
+    <!-- Dynamic Cartoon Backgrounds Container -->
+    <div id="bg-image-container">
+        <!-- 34 unique cartoon images injected dynamically -->
+    </div>
+
+    <!-- Particle System Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Ambient Glowing Orbs -->
+    <div class="ambient-light">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Start Overlay Screen -->
+    <div id="start-overlay">
+        <h1 class="song-title-hindi">निगाहों का ठिकाना</h1>
+        <div class="song-album">Nigaahon Ka Thikana</div>
+        <div class="song-genre">Soulful Bollywood R&B • 90 BPM</div>
+        <button class="start-btn" id="start-btn">
+            <span>Play Experience</span>
+            <span>▶</span>
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <div id="app-container">
+        <!-- Section Badge -->
+        <div class="section-badge" id="section-badge">Intro</div>
+
+        <!-- Lyrics Container -->
+        <div class="lyrics-container" id="lyrics-wrapper">
+            <!-- Lyrics Lines injected dynamically -->
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <div class="progress-container" id="progress-container" title="Click to seek">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="time-row">
+                <span id="current-time">00:00</span>
+                <div class="control-buttons">
+                    <button class="icon-btn" id="rewind-btn" title="Rewind 10s">↺</button>
+                    <button class="icon-btn" id="play-pause-btn" title="Play/Pause">⏸</button>
+                    <button class="icon-btn" id="forward-btn" title="Forward 10s">↻</button>
+                </div>
+                <span id="total-time">02:49</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Particle System: Anime Stars & Falling Sakura Petals
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class AnimeParticle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20;
+                this.size = Math.random() * 4 + 2;
+                this.speedY = Math.random() * 1.2 + 0.5;
+                this.speedX = Math.sin(Math.random() * Math.PI) * 0.8 + 0.3;
+                this.angle = Math.random() * 360;
+                this.spin = (Math.random() - 0.5) * 2;
+                this.alpha = Math.random() * 0.6 + 0.3;
+                // Alternates between Sakura Pink and Starlight Violet/Gold
+                const type = Math.random();
+                if (type < 0.5) {
+                    this.color = '244, 114, 182'; // Pink petal
+                    this.isPetal = true;
+                } else if (type < 0.85) {
+                    this.color = '192, 132, 252'; // Violet sparkle
+                    this.isPetal = false;
+                } else {
+                    this.color = '253, 224, 71'; // Gold star
+                    this.isPetal = false;
+                }
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX + Math.sin(this.y * 0.02) * 0.5;
+                this.angle += this.spin;
+                if (this.y > canvas.height + 20 || this.x > canvas.width + 20) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.angle * Math.PI) / 180);
+                ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = `rgba(${this.color}, 0.8)`;
+
+                if (this.isPetal) {
+                    // Draw delicate petal shape
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size, this.size * 1.8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Draw sparkling star
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size * 0.7, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            const count = Math.floor((canvas.width * canvas.height) / 14000) + 25;
+            for (let i = 0; i < count; i++) {
+                const p = new AnimeParticle();
+                p.y = Math.random() * canvas.height;
+                particlesArray.push(p);
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles();
+        animateParticles();
+
+        // Synchronized Lyrics and 34 Unique Cartoon Backgrounds (Zero Repeats!)
+        const lyrics = [
+            // Intro (0:00 - 0:12)
+            { time: 0.0, section: "Intro", text: "<div class='instrumental-indicator'>✨ निगाहों का ठिकाना • Soulful R&B ✨</div>", image: "img_01.jpg" },
+            { time: 2.5, section: "Intro", text: "Teri aankhon mein hai kaisa ye nasha", image: "img_02.jpg" },
+            { time: 7.0, section: "Intro", text: "Har sukoon mera yahin pe aake ruka", image: "img_03.jpg" },
+
+            // Verse 1 (0:12 - 0:36)
+            { time: 12.0, section: "Verse 1", text: "Pehli nazar mein hi tera nasha sa chadha tha", image: "img_04.jpg" },
+            { time: 18.0, section: "Verse 1", text: "Jab tu samne aayi dil jor se dhadka tha", image: "img_05.jpg" },
+            { time: 24.0, section: "Verse 1", text: "Aankhon mein teri maine ek khwaab sa dekha", image: "img_06.jpg" },
+            { time: 30.0, section: "Verse 1", text: "Jaise rab ne mere liye tera naam tha likha", image: "img_07.jpg" },
+
+            // Pre-Chorus (0:36 - 0:48)
+            { time: 36.0, section: "Pre-Chorus", text: "Ek jhalak teri badal deti hai samaa", image: "img_08.jpg" },
+            { time: 42.0, section: "Pre-Chorus", text: "Bhool jata hoon main ye saara jahaan", image: "img_09.jpg" },
+
+            // Chorus (0:48 - 1:12)
+            { time: 48.0, section: "Chorus", text: "In aankhon mein hi khona chahta hoon", image: "img_10.jpg" },
+            { time: 54.0, section: "Chorus", text: "Har dard-o-gham ko main bhulana chahta hoon", image: "img_11.jpg" },
+            { time: 60.0, section: "Chorus", text: "Ye nigahen bolti hain dabi si dastan", image: "img_12.jpg" },
+            { time: 66.0, section: "Chorus", text: "Inke aage fika lagta hai har sitara", image: "img_13.jpg" },
+
+            // Rap Verse (1:12 - 1:36)
+            { time: 72.0, section: "Rap Verse", text: "Teri nigahen jaise raat ka sitara hai", image: "img_14.jpg" },
+            { time: 75.0, section: "Rap Verse", text: "Inmein basta koi khwaab bada pyara hai", image: "img_15.jpg" },
+            { time: 78.0, section: "Rap Verse", text: "Chand se bhi hasin tera ye roop lagega", image: "img_16.jpg" },
+            { time: 81.0, section: "Rap Verse", text: "Ishq ka ye silsila ab kabhi na rukega", image: "img_17.jpg" },
+            { time: 84.0, section: "Rap Verse", text: "Lab khamosh magar aankhein sab kehti hain", image: "img_18.jpg" },
+            { time: 87.0, section: "Rap Verse", text: "Dil ki har ek baat inmein hi behti hai", image: "img_19.jpg" },
+            { time: 90.0, section: "Rap Verse", text: "Haya ka ye parda bhi kamal ka asar rakhta", image: "img_20.jpg" },
+            { time: 93.0, section: "Rap Verse", text: "Mera dil to bas teri ek nazar pe marta", image: "img_21.jpg" },
+
+            // Chorus (1:36 - 2:00)
+            { time: 96.0, section: "Chorus", text: "In aankhon mein hi khona chahta hoon", image: "img_22.jpg" },
+            { time: 102.0, section: "Chorus", text: "Har dard-o-gham ko main bhulana chahta hoon", image: "img_23.jpg" },
+            { time: 108.0, section: "Chorus", text: "Ye nigahen bolti hain dabi si dastan", image: "img_24.jpg" },
+            { time: 114.0, section: "Chorus", text: "Inke aage fika lagta hai har sitara", image: "img_25.jpg" },
+
+            // Bridge (2:00 - 2:12)
+            { time: 120.0, section: "Bridge", text: "Mera dil bas ek teri hi nigaahon ka thikana hai", image: "img_26.jpg" },
+            { time: 126.0, section: "Bridge", text: "Maine to tujhme hi apna poora jahaan paya hai", image: "img_27.jpg" },
+
+            // Final Chorus (2:12 - 2:36)
+            { time: 132.0, section: "Final Chorus", text: "In aankhon mein hi khona chahta hoon", image: "img_28.jpg" },
+            { time: 138.0, section: "Final Chorus", text: "Har dard-o-gham ko main bhulana chahta hoon", image: "img_29.jpg" },
+            { time: 144.0, section: "Final Chorus", text: "Ye nigahen bolti hain dabi si dastan", image: "img_30.jpg" },
+            { time: 150.0, section: "Final Chorus", text: "Inke aage fika lagta hai har sitara", image: "img_31.jpg" },
+
+            // Outro (2:36 - 2:49.5)
+            { time: 156.0, section: "Outro", text: "Teri ye aankhein mere dil ka sukoon hain", image: "img_32.jpg" },
+            { time: 161.0, section: "Outro", text: "Hamesha ke liye inhi mein kho jana hai", image: "img_33.jpg" },
+            { time: 165.5, section: "Outro", text: "<div class='instrumental-indicator'>💖 निगाहों का ठिकाना • Forever In Your Eyes 💖</div>", image: "img_34.jpg" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('start-btn');
+            const overlay = document.getElementById('start-overlay');
+            const audio = document.getElementById('bg-music');
+            const lyricsWrapper = document.getElementById('lyrics-wrapper');
+            const bgImageContainer = document.getElementById('bg-image-container');
+            const progressBar = document.getElementById('progress-bar');
+            const progressContainer = document.getElementById('progress-container');
+            const currentTimeEl = document.getElementById('current-time');
+            const totalTimeEl = document.getElementById('total-time');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const rewindBtn = document.getElementById('rewind-btn');
+            const forwardBtn = document.getElementById('forward-btn');
+            const sectionBadge = document.getElementById('section-badge');
+
+            let currentIndex = -1;
+
+            // Inject Lyrics and 34 Unique Cartoon Images
+            lyrics.forEach((line, index) => {
+                // Text Element
+                const el = document.createElement('div');
+                el.classList.add('lyrics-line');
+                
+                let formattedText = '';
+                if (line.text.includes('<div')) {
+                    formattedText = line.text;
+                } else {
+                    const words = line.text.split(' ');
+                    formattedText = words.map((word, i) => 
+                        `<span class="lyrics-word" style="transition-delay: ${i * 0.12}s">${word}</span>`
+                    ).join('');
+                }
+
+                el.innerHTML = `<div class="lyrics-text" id="text-container-${index}">${formattedText}</div>`;
+                el.id = `line-${index}`;
+                lyricsWrapper.appendChild(el);
+
+                // Cartoon Image Element
+                const imgEl = document.createElement('img');
+                imgEl.src = `nigaahon_images/${line.image}`;
+                imgEl.classList.add('bg-image');
+                imgEl.id = `bg-${index}`;
+                
+                // Safe fallback to first cartoon image
+                imgEl.onerror = function() {
+                    this.src = 'nigaahon_images/img_01.jpg';
+                };
+
+                bgImageContainer.appendChild(imgEl);
+            });
+
+            function formatTime(seconds) {
+                if (isNaN(seconds) || seconds < 0) return "00:00";
+                const min = Math.floor(seconds / 60);
+                const sec = Math.floor(seconds % 60);
+                return `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
+            }
+
+            function updateLyrics(currentTime) {
+                let activeIdx = -1;
+                for (let i = 0; i < lyrics.length; i++) {
+                    if (currentTime >= lyrics[i].time) {
+                        activeIdx = i;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (activeIdx !== currentIndex) {
+                    if (currentIndex !== -1) {
+                        const prevEl = document.getElementById(`line-${currentIndex}`);
+                        if (prevEl) {
+                            prevEl.classList.remove('active');
+                            prevEl.classList.add('exit');
+                        }
+                        const prevImg = document.getElementById(`bg-${currentIndex}`);
+                        if (prevImg) {
+                            prevImg.classList.remove('active');
+                        }
+                    }
+
+                    if (activeIdx !== -1) {
+                        const nextEl = document.getElementById(`line-${activeIdx}`);
+                        if (nextEl) {
+                            nextEl.classList.remove('exit');
+                            nextEl.classList.add('active');
+                        }
+                        const nextImg = document.getElementById(`bg-${activeIdx}`);
+                        if (nextImg) {
+                            nextImg.classList.add('active');
+                        }
+                        if (lyrics[activeIdx].section) {
+                            sectionBadge.textContent = lyrics[activeIdx].section;
+                            sectionBadge.classList.add('visible');
+                        }
+                    }
+
+                    currentIndex = activeIdx;
+                }
+            }
+
+            audio.addEventListener('timeupdate', () => {
+                const cur = audio.currentTime;
+                const dur = audio.duration || 169.5;
+
+                updateLyrics(cur);
+
+                const progress = (cur / dur) * 100;
+                progressBar.style.width = `${progress}%`;
+                currentTimeEl.textContent = formatTime(cur);
+                totalTimeEl.textContent = formatTime(dur);
+            });
+
+            // Seek click
+            progressContainer.addEventListener('click', (e) => {
+                const rect = progressContainer.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                const dur = audio.duration || 169.5;
+                audio.currentTime = pos * dur;
+            });
+
+            // Play / Pause
+            function togglePlay() {
+                if (audio.paused) {
+                    audio.play();
+                    playPauseBtn.textContent = '⏸';
+                } else {
+                    audio.pause();
+                    playPauseBtn.textContent = '▶';
+                }
+            }
+            playPauseBtn.addEventListener('click', togglePlay);
+
+            rewindBtn.addEventListener('click', () => {
+                audio.currentTime = Math.max(0, audio.currentTime - 10);
+            });
+            forwardBtn.addEventListener('click', () => {
+                const dur = audio.duration || 169.5;
+                audio.currentTime = Math.min(dur, audio.currentTime + 10);
+            });
+
+            // Keyboard shortcut
+            window.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    togglePlay();
+                } else if (e.code === 'ArrowLeft') {
+                    audio.currentTime = Math.max(0, audio.currentTime - 5);
+                } else if (e.code === 'ArrowRight') {
+                    const dur = audio.duration || 169.5;
+                    audio.currentTime = Math.min(dur, audio.currentTime + 5);
+                }
+            });
+
+            // Web Audio API dynamic beat visualizer
+            let audioCtx, analyser, dataArray;
+            let audioReactiveEnabled = false;
+
+            startBtn.addEventListener('click', () => {
+                if (!audioCtx) {
+                    try {
+                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        const audioSrc = audioCtx.createMediaElementSource(audio);
+                        analyser = audioCtx.createAnalyser();
+                        audioSrc.connect(analyser);
+                        analyser.connect(audioCtx.destination);
+                        analyser.fftSize = 256;
+                        const bufferLength = analyser.frequencyBinCount;
+                        dataArray = new Uint8Array(bufferLength);
+                        audioReactiveEnabled = true;
+                    } catch (err) {
+                        console.warn('AudioContext not supported or restricted:', err);
+                    }
+                }
+
+                audio.play().then(() => {
+                    overlay.style.opacity = 0;
+                    setTimeout(() => overlay.style.display = 'none', 800);
+                    playPauseBtn.textContent = '⏸';
+                }).catch(e => {
+                    console.error("Audio playback error:", e);
+                    alert("Please click or interact with the page to allow audio playback.");
+                });
+            });
+
+            function audioLoop() {
+                if (audioReactiveEnabled && currentIndex !== -1 && !audio.paused) {
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    let sum = 0;
+                    for (let i = 0; i < 28; i++) {
+                        sum += dataArray[i];
+                    }
+                    const average = sum / 28;
+                    
+                    const scale = 1 + (average / 255) * 0.18;
+                    const glow = (average / 255) * 50;
+
+                    const activeTextContainer = document.getElementById(`text-container-${currentIndex}`);
+                    if (activeTextContainer) {
+                        activeTextContainer.style.transform = `scale(${scale})`;
+                        activeTextContainer.style.textShadow = `0 0 ${glow + 12}px rgba(192, 132, 252, 0.95), 0 0 ${(glow/2) + 18}px rgba(244, 114, 182, 0.75)`;
+                    }
+                }
+                requestAnimationFrame(audioLoop);
+            }
+            audioLoop();
+        });
+    </script>
+</body>
+
+</html>
